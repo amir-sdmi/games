@@ -1,12 +1,57 @@
 "use client";
-import { ReactNode, useCallback, useEffect, useState } from "react";
-
+import { getRandomWord } from "./_utils/words";
+import { useCallback, useEffect, useState } from "react";
+type Word = {
+  char: string;
+  charStatus: "empty" | "filled" | "correct" | "wrong" | "wrongPosition";
+};
+const initialWord: Word = {
+  char: "",
+  charStatus: "empty",
+};
 export default function WordlePage() {
-  const [answer, setAnswer] = useState("");
-  const [word, setWord] = useState(new Array(5).fill(""));
-  const [wordIndex, setWordIndex] = useState(0);
+  const [pickedWord, setPickedWord] = useState(["H", "E", "L", "L", "O"]);
+  // 6 rows and 5 columns
+  const [answer, setAnswer] = useState<Word[][]>(
+    new Array(6).fill(null).map(() =>
+      Array(5)
+        .fill(null)
+        .map(() => ({ ...initialWord }))
+    )
+  );
+
+  const [row, setRow] = useState(0);
+  const [column, setColumn] = useState(0);
+  const [lastChecked, setLastCheckedWord] = useState("");
+
   const [isNotWord, setIsNotWord] = useState(false);
-  const [lastChekcedWord, setLastCheckedWord] = useState("");
+  // generate a new word when the page loads
+  useEffect(() => {
+    const newWord = getRandomWord().toUpperCase().split("");
+
+    setPickedWord(newWord);
+  }, []);
+
+  const checkWord = useCallback(
+    (word: Word[], pickedWord: string[]) => {
+      const updatedWord = word.map((letter, index): Word => {
+        if (letter.char === pickedWord[index]) {
+          return { ...letter, charStatus: "correct" };
+        } else if (pickedWord.includes(letter.char)) {
+          return { ...letter, charStatus: "wrongPosition" };
+        } else {
+          return { ...letter, charStatus: "wrong" };
+        }
+      });
+
+      const newAnswer = [...answer];
+      newAnswer[row] = updatedWord;
+      setAnswer(newAnswer);
+      setRow((prevRow) => prevRow + 1);
+      setColumn(0);
+    },
+    [answer, row]
+  );
 
   const isValidWord = async (word: string) => {
     try {
@@ -24,42 +69,53 @@ export default function WordlePage() {
   const handleKeyDown = useCallback(
     async (e: KeyboardEvent) => {
       if (e.key === "Enter") {
-        if (word.every((letter) => letter !== "")) {
-          const currentWord = word.join("");
+        if (answer[row].every((letter) => letter.charStatus !== "empty")) {
+          const currentWord = answer[row].map((letter) => letter.char).join("");
 
-          if (currentWord === lastChekcedWord) {
+          //prevent fetching the same word
+          if (currentWord === lastChecked) {
             setIsNotWord(true);
             return;
           }
 
           if (await isValidWord(currentWord)) {
-            setAnswer(currentWord);
-            setIsNotWord(false); //is it neccessary?
+            setIsNotWord(false);
+
+            checkWord(answer[row], pickedWord);
           } else {
             setIsNotWord(true);
             setLastCheckedWord(currentWord);
           }
         }
       } else if (/^[a-zA-Z]$/.test(e.key)) {
-        if (wordIndex < word.length && word[wordIndex] === "") {
-          const newWord = [...word];
-          newWord[wordIndex] = e.key.toUpperCase();
-          setWord(newWord);
-          if (wordIndex < word.length) {
-            setWordIndex((prevIndex) => prevIndex + 1);
+        if (
+          column < answer[row].length &&
+          answer[row][column].charStatus === "empty"
+        ) {
+          const newAnswer = [...answer];
+
+          newAnswer[row][column].char = e.key.toUpperCase();
+          newAnswer[row][column].charStatus = "filled";
+          setAnswer(newAnswer);
+
+          if (column < answer[row].length) {
+            setColumn((prevIndex) => prevIndex + 1);
           }
         }
       } else if (e.key === "Backspace") {
-        setIsNotWord(false);
-        const newWord = [...word];
-        newWord[wordIndex - 1] = "";
-        setWord(newWord);
-        if (wordIndex > 0) {
-          setWordIndex((prevIndex) => prevIndex - 1);
+        if (column > 0) {
+          setIsNotWord(false);
+
+          const newAnswer = [...answer];
+          newAnswer[row][column - 1].char = "";
+          newAnswer[row][column - 1].charStatus = "empty";
+          setAnswer(newAnswer);
+
+          setColumn((prevIndex) => prevIndex - 1);
         }
       }
     },
-    [word, wordIndex, lastChekcedWord]
+    [answer, row, column, lastChecked, pickedWord, checkWord]
   );
 
   useEffect(() => {
@@ -72,9 +128,17 @@ export default function WordlePage() {
 
   return (
     <>
-      <div className="flex justify-center items-center">
-        {word.map((letter, index) => (
-          <Square key={index}>{letter}</Square>
+      <div className="flex flex-col gap-2 justify-center items-center">
+        {answer.map((answerRow, rowIndex) => (
+          <div key={rowIndex} className="flex gap-2">
+            {answerRow.map((letter, index) => (
+              <Square
+                key={index}
+                char={letter.char}
+                charStatus={letter.charStatus}
+              />
+            ))}
+          </div>
         ))}
       </div>
       <div>{isNotWord && <p>Is not a Valid Word</p>}</div>
@@ -82,10 +146,21 @@ export default function WordlePage() {
   );
 }
 
-const Square = ({ children }: { children: ReactNode }) => {
+const Square = ({ char, charStatus }: Word) => {
+  const backgroundColor =
+    charStatus === "correct"
+      ? "bg-green-500"
+      : charStatus === "wrongPosition"
+        ? "bg-yellow-500"
+        : charStatus === "wrong"
+          ? "bg-gray-500"
+          : "bg-gray-200"; // Default for empty or filled but not checked
+
   return (
-    <div className="h-14 w-14 rounded border border-gray-600 bg-gray-200 flex justify-center items-center font-bold text-2xl">
-      {children}
+    <div
+      className={`h-14 w-14 rounded border border-gray-500 ${backgroundColor} flex justify-center items-center font-bold text-2xl`}
+    >
+      {char}
     </div>
   );
 };

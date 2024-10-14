@@ -1,35 +1,43 @@
 "use client";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useCallback, useEffect, useState } from "react";
 
 export default function WordlePage() {
   const [answer, setAnswer] = useState("");
   const [word, setWord] = useState(new Array(5).fill(""));
   const [wordIndex, setWordIndex] = useState(0);
   const [isNotWord, setIsNotWord] = useState(false);
+  const [lastChekcedWord, setLastCheckedWord] = useState("");
 
-  useEffect(() => {
-    const isValidWord = async (word: string) => {
-      try {
-        const res = await fetch(
-          `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
-        );
-        if (!res.ok) return false;
-        const result = await res.json();
-        return result[0]?.word ? true : false;
-      } catch (error) {
-        console.error("Error checking word:", error);
-        return false;
-      }
-    };
-
-    const handleKeyDown = async (e: KeyboardEvent) => {
+  const isValidWord = async (word: string) => {
+    try {
+      const res = await fetch(
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
+      );
+      if (!res.ok) return false;
+      const result = await res.json();
+      return result[0]?.word ? true : false;
+    } catch (error) {
+      console.error("Error checking word:", error);
+      return false;
+    }
+  };
+  const handleKeyDown = useCallback(
+    async (e: KeyboardEvent) => {
       if (e.key === "Enter") {
         if (word.every((letter) => letter !== "")) {
-          //TODO if user didnt changed the word and pressed enter again, dont send request, just say this is not a valid word !
-          if (await isValidWord(word.join(""))) {
-            setAnswer(word.join(""));
+          const currentWord = word.join("");
+
+          if (currentWord === lastChekcedWord) {
+            setIsNotWord(true);
+            return;
+          }
+
+          if (await isValidWord(currentWord)) {
+            setAnswer(currentWord);
+            setIsNotWord(false); //is it neccessary?
           } else {
             setIsNotWord(true);
+            setLastCheckedWord(currentWord);
           }
         }
       } else if (/^[a-zA-Z]$/.test(e.key)) {
@@ -50,14 +58,17 @@ export default function WordlePage() {
           setWordIndex((prevIndex) => prevIndex - 1);
         }
       }
-    };
+    },
+    [word, wordIndex, lastChekcedWord]
+  );
 
+  useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
 
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [word, wordIndex]);
+  }, [handleKeyDown]);
 
   return (
     <>

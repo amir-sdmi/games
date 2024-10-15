@@ -6,12 +6,21 @@ type Word = {
   char: string;
   charStatus: "empty" | "filled" | "correct" | "wrong" | "wrongPosition";
 };
-const initialWord: Word = {
-  char: "",
-  charStatus: "empty",
+
+const initialState = {
+  position: { row: 0, column: 0 },
+  lastChecked: "",
+  isNotWord: false,
+  pickedWord: [""],
+  initialWord: {
+    char: "",
+    charStatus: "empty",
+  } as Word,
 };
+
 export default function WordlePage() {
-  const [pickedWord, setPickedWord] = useState([""]);
+  const [reset, setReset] = useState(false);
+  const [pickedWord, setPickedWord] = useState(initialState.pickedWord);
   // 6 rows and 5 columns
   const [answer, setAnswer] = useState<Word[][]>(
     Array(6)
@@ -19,21 +28,35 @@ export default function WordlePage() {
       .map(() =>
         Array(5)
           .fill(null)
-          .map(() => ({ ...initialWord }))
+          .map(() => ({ ...initialState.initialWord }))
       )
   );
 
-  const [position, setPosition] = useState({ row: 0, column: 0 });
+  const [position, setPosition] = useState(initialState.position);
 
-  const [lastChecked, setLastCheckedWord] = useState("");
+  const [lastChecked, setLastCheckedWord] = useState(initialState.lastChecked);
 
-  const [isNotWord, setIsNotWord] = useState(false);
-  // generate a new word when the page loads
+  const [isNotWord, setIsNotWord] = useState(initialState.isNotWord);
   useEffect(() => {
+    if (reset) {
+      setAnswer(
+        Array(6)
+          .fill(null)
+          .map(() =>
+            Array(5)
+              .fill(null)
+              .map(() => ({ ...initialState.initialWord }))
+          )
+      );
+      setPosition(initialState.position);
+      setIsNotWord(initialState.isNotWord);
+      setLastCheckedWord(initialState.lastChecked);
+    }
+    // generate a new word when the page loads
     const newWord = getRandomWord().toUpperCase().split("");
-
     setPickedWord(newWord);
-  }, []);
+    setReset(false);
+  }, [reset]);
 
   const checkWord = useCallback(
     (word: Word[], pickedWord: string[]) => {
@@ -159,6 +182,12 @@ export default function WordlePage() {
         ))}
       </div>
       <div>{isNotWord && <p>Is not a Valid Word</p>}</div>
+      <button
+        className="rounded bg-gray-200 border border-blue-400 px-4 py-1"
+        onClick={() => setReset(true)}
+      >
+        RESET
+      </button>
     </>
   );
 }

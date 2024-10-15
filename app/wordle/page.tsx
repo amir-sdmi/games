@@ -16,9 +16,11 @@ const initialState = {
     char: "",
     charStatus: "empty",
   } as Word,
+  gameState: "playing" as GameState,
 };
-
+type GameState = "playing" | "won" | "lost";
 export default function WordlePage() {
+  const [gameState, setGameState] = useState<GameState>(initialState.gameState);
   const [reset, setReset] = useState(false);
   const [pickedWord, setPickedWord] = useState(initialState.pickedWord);
   // 6 rows and 5 columns
@@ -51,6 +53,7 @@ export default function WordlePage() {
       setPosition(initialState.position);
       setIsNotWord(initialState.isNotWord);
       setLastCheckedWord(initialState.lastChecked);
+      setGameState(initialState.gameState);
     }
     // generate a new word when the page loads
     const newWord = getRandomWord().toUpperCase().split("");
@@ -73,6 +76,12 @@ export default function WordlePage() {
       const newAnswer = [...answer];
       newAnswer[position.row] = updatedWord;
       setAnswer(newAnswer);
+      if (updatedWord.every((letter) => letter.charStatus === "correct")) {
+        setGameState("won");
+      } else if (position.row === answer.length - 1) {
+        setGameState("lost");
+      }
+
       setPosition((prevPosition) => ({
         row: prevPosition.row + 1,
         column: 0,
@@ -98,6 +107,8 @@ export default function WordlePage() {
   };
   const handleKeyDown = useCallback(
     async (e: KeyboardEvent) => {
+      if (gameState === "won" || gameState === "lost") return;
+
       if (e.key === "Enter") {
         if (
           answer[position.row].every((letter) => letter.charStatus !== "empty")
@@ -114,7 +125,6 @@ export default function WordlePage() {
 
           if (await isValidWord(currentWord)) {
             setIsNotWord(false);
-
             checkWord(answer[position.row], pickedWord);
           } else {
             setIsNotWord(true);
@@ -155,7 +165,7 @@ export default function WordlePage() {
         }
       }
     },
-    [answer, position, lastChecked, pickedWord, checkWord]
+    [answer, position, lastChecked, pickedWord, checkWord, gameState]
   );
 
   useEffect(() => {
@@ -182,6 +192,13 @@ export default function WordlePage() {
         ))}
       </div>
       <div>{isNotWord && <p>Is not a Valid Word</p>}</div>
+      <div className="text-lg">
+        {gameState === "won" ? (
+          <p className="bg-green-500 p-4">You won!</p>
+        ) : gameState === "lost" ? (
+          <p className="bg-red-500 p-4">You lost!</p>
+        ) : null}
+      </div>
       <button
         className="rounded bg-gray-200 border border-blue-400 px-4 py-1"
         onClick={() => setReset(true)}

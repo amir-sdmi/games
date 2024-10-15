@@ -1,15 +1,9 @@
-import type { Metadata } from "next";
 import "./globals.css";
 
 const games = [
   { name: "Wordle", href: "/wordle" },
   { name: "Capitals", href: "/capitals" },
 ];
-
-export const metadata: Metadata = {
-  title: "React Games",
-  description: "Some simple game challenges in React",
-};
 
 export default function RootLayout({
   children,
@@ -21,7 +15,7 @@ export default function RootLayout({
       <head>
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>{metadata.title}</title>
+        <title>React Games</title>
       </head>
       <body className="bg-gray-100 text-gray-900">
         <header className="bg-white shadow">

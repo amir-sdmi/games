@@ -201,7 +201,10 @@ export default function WordlePage() {
       </div>
       <button
         className="rounded bg-gray-200 border border-blue-400 px-4 py-1"
-        onClick={() => setReset(true)}
+        onClick={(e) => {
+          setReset(true);
+          e.currentTarget.blur();
+        }}
       >
         RESET
       </button>

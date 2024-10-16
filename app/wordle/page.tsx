@@ -2,6 +2,16 @@
 import Square from "./_components/Square";
 import { getRandomWord } from "./_utils/words";
 import { useCallback, useEffect, useState } from "react";
+import Keyboard from "react-simple-keyboard";
+import "react-simple-keyboard/build/css/index.css";
+
+const keyboardLayout = {
+  default: [
+    "Q W E R T Y U I O P",
+    "A S D F G H J K L {bksp}",
+    "Z X C V B N M {enter}",
+  ],
+};
 type Word = {
   char: string;
   charStatus: "empty" | "filled" | "correct" | "wrong" | "wrongPosition";
@@ -105,11 +115,14 @@ export default function WordlePage() {
       return false;
     }
   };
+
   const handleKeyDown = useCallback(
-    async (e: KeyboardEvent) => {
+    async (e: KeyboardEvent | { key: string }) => {
       if (gameState === "won" || gameState === "lost") return;
 
-      if (e.key === "Enter") {
+      const key = e.key.toLowerCase(); // Normalize key for handling both real and virtual keyboards
+
+      if (key === "enter" || key === "{enter}") {
         if (
           answer[position.row].every((letter) => letter.charStatus !== "empty")
         ) {
@@ -131,14 +144,14 @@ export default function WordlePage() {
             setLastCheckedWord(currentWord);
           }
         }
-      } else if (/^[a-zA-Z]$/.test(e.key)) {
+      } else if (/^[a-zA-Z]$/.test(key)) {
         if (
           position.column < answer[position.row].length &&
           answer[position.row][position.column].charStatus === "empty"
         ) {
           const newAnswer = [...answer];
 
-          newAnswer[position.row][position.column].char = e.key.toUpperCase();
+          newAnswer[position.row][position.column].char = key.toUpperCase();
           newAnswer[position.row][position.column].charStatus = "filled";
           setAnswer(newAnswer);
 
@@ -149,7 +162,7 @@ export default function WordlePage() {
             }));
           }
         }
-      } else if (e.key === "Backspace") {
+      } else if (key === "backspace" || key === "{bksp}") {
         if (position.column > 0) {
           setIsNotWord(false);
 
@@ -208,6 +221,18 @@ export default function WordlePage() {
       >
         RESET
       </button>
+
+      <Keyboard
+        onKeyPress={(key) => {
+          handleKeyDown({ key }); // Pass only the key as a string
+        }}
+        layoutName="default"
+        layout={keyboardLayout}
+        display={{
+          "{bksp}": "<---",
+          "{enter}": "Enter",
+        }}
+      />
     </>
   );
 }

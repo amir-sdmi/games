@@ -21,7 +21,6 @@ const initialState = {
   position: { row: 0, column: 0 },
   lastChecked: "",
   isNotWord: false,
-  pickedWord: [""],
   initialWord: {
     char: "",
     charStatus: "empty",
@@ -32,7 +31,6 @@ type GameState = "playing" | "won" | "lost";
 export default function WordlePage() {
   const [gameState, setGameState] = useState<GameState>(initialState.gameState);
   const [reset, setReset] = useState(false);
-  const [pickedWord, setPickedWord] = useState(initialState.pickedWord);
   // 6 rows and 5 columns
   const [answer, setAnswer] = useState<Word[][]>(
     Array(6)
@@ -49,6 +47,19 @@ export default function WordlePage() {
   const [lastChecked, setLastCheckedWord] = useState(initialState.lastChecked);
 
   const [isNotWord, setIsNotWord] = useState(initialState.isNotWord);
+
+  function wordHandler() {
+    let newWord: string[] = [];
+
+    return {
+      set: (word: string[]) => {
+        newWord = word;
+      },
+      get: () => newWord,
+    };
+  }
+
+  const wordManager = wordHandler();
   useEffect(() => {
     if (reset) {
       setAnswer(
@@ -67,9 +78,10 @@ export default function WordlePage() {
     }
     // generate a new word when the page loads
     const newWord = getRandomWord().toUpperCase().split("");
-    setPickedWord(newWord);
+    wordManager.set(newWord);
+
     setReset(false);
-  }, [reset]);
+  }, [reset, wordManager]);
 
   const checkWord = useCallback(
     (word: Word[], pickedWord: string[]) => {
@@ -138,7 +150,7 @@ export default function WordlePage() {
 
           if (await isValidWord(currentWord)) {
             setIsNotWord(false);
-            checkWord(answer[position.row], pickedWord);
+            checkWord(answer[position.row], wordManager.get());
           } else {
             setIsNotWord(true);
             setLastCheckedWord(currentWord);
@@ -178,7 +190,7 @@ export default function WordlePage() {
         }
       }
     },
-    [answer, position, lastChecked, pickedWord, checkWord, gameState]
+    [answer, position, lastChecked, wordManager, checkWord, gameState]
   );
 
   useEffect(() => {

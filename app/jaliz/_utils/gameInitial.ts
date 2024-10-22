@@ -1,9 +1,9 @@
-import { PlayerType } from "../_types/types";
+import { CardType, GameType, PlayerType } from "../_types/types";
 
-export const createNewPlayer = (id: number): PlayerType => {
+const createNewPlayer = (id: number, playerName: string): PlayerType => {
   return {
     id,
-    playerName: `player ${id + 1}`,
+    playerName,
     money: 0,
     hand: [],
     fields: [
@@ -14,5 +14,29 @@ export const createNewPlayer = (id: number): PlayerType => {
     playerHat: { ownerId: id, ownedById: id },
     tractor: false,
     otherPlayersHats: [],
+  };
+};
+
+export const createNewGame = (
+  playersNames: string[],
+  cards: CardType[]
+): GameType => {
+  const players = playersNames.map((playerName, index) =>
+    createNewPlayer(index, playerName)
+  );
+  const currentPlayer = players[Math.floor(Math.random() * players.length)].id;
+
+  const filteredCards = cards.filter((card) => card.id >= 1 && card.id <= 9);
+  const deck: CardType[] = [];
+
+  filteredCards.forEach((card) => {
+    for (let i = 0; i < card.totalQuantity; i++) {
+      deck.push(card);
+    }
+  });
+  return {
+    players,
+    currentPlayer,
+    deck,
   };
 };

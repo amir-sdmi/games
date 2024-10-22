@@ -35,4 +35,10 @@ type CardType = {
   fourCoinPrice: 7 | 8 | 9 | 10 | null;
 };
 
-export type { PlayerType, CardType, HatType, FieldType, CropType };
+type GameType = {
+  players: PlayerType[];
+  currentPlayer: PlayerType["id"];
+  deck: CardType[];
+};
+
+export type { PlayerType, CardType, HatType, FieldType, CropType, GameType };

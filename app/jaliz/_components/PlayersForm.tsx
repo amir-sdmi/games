@@ -1,21 +1,20 @@
-import { PlayerType } from "../_types/types";
-import { createNewPlayer } from "../_utils/gameInitial";
+"use client";
+
+import { GameType } from "../_types/types";
+import { createNewGame } from "../_utils/gameInitial";
+import { cards } from "../_utils/cardData";
 
 export default function PlayersForm({
   players,
   setPlayers,
   setGameStatus,
+  setGame,
 }: {
-  players: PlayerType[];
-  setPlayers: (players: PlayerType[]) => void;
+  players: string[];
+  setPlayers: (players: string[]) => void;
   setGameStatus: (gameStatus: "initial" | "playing" | "finished") => void;
+  setGame: (game: GameType) => void;
 }) {
-  const handleAddPlayer = () => {
-    const newPlayers = [...players];
-    newPlayers.push(createNewPlayer(newPlayers.length));
-    setPlayers(newPlayers);
-  };
-
   return (
     <>
       <p>please enter the name of players. this game need 3-7 players. </p>
@@ -23,51 +22,57 @@ export default function PlayersForm({
         className="flex flex-col gap-4"
         onSubmit={(e) => {
           e.preventDefault();
+          setPlayers(players);
+          setGame(createNewGame(players, cards));
           setGameStatus("playing");
         }}
       >
         {players.map((player, i) => {
           return (
             <div key={i} className="gap-4 flex">
-              <label htmlFor={`player${i}`}>Player {i + 1}:</label>
-              <input
-                type="text"
-                name={`player${i}`}
-                id={`player${i}`}
-                defaultValue={player.playerName}
-                placeholder={`player ${i + 1}`}
-                onFocus={(e) => {
-                  e.target.select();
-                }}
-                onChange={(e) => {
-                  const newPlayers = [...players];
-                  newPlayers[i].playerName = e.target.value;
-                  newPlayers[i].id = i;
-                  setPlayers(newPlayers);
-                }}
-              />
+              <label>
+                Player {i + 1}:{" "}
+                <input
+                  type="text"
+                  defaultValue={player}
+                  placeholder={`player ${i + 1}`}
+                  onFocus={(e) => {
+                    e.target.select();
+                  }}
+                  onChange={(e) => {
+                    const newPlayerInputs = [...players];
+                    newPlayerInputs[i] = e.target.value;
+                    setPlayers(newPlayerInputs);
+                  }}
+                />
+              </label>
 
-              {players.length > 3 ? (
+              {players.length > 3 && (
                 <button
                   type="button"
                   onClick={() => {
-                    const newPlayers = [...players];
-                    newPlayers.splice(i, 1);
-                    setPlayers(newPlayers);
+                    const newPlayerInputs = [...players];
+                    newPlayerInputs.splice(i, 1);
+                    setPlayers(newPlayerInputs);
                   }}
                 >
                   -
                 </button>
-              ) : null}
+              )}
             </div>
           );
         })}
 
-        {players.length < 7 ? (
-          <button type="button" onClick={handleAddPlayer}>
+        {players.length < 7 && (
+          <button
+            type="button"
+            onClick={() => {
+              setPlayers([...players, `player ${players.length + 1}`]);
+            }}
+          >
             Add player
           </button>
-        ) : null}
+        )}
 
         <button
           type="submit"

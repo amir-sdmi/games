@@ -33,12 +33,14 @@ export const plant = (
 };
 
 export const harvest = (
-  field: FieldType
-): { field: FieldType; money: number } => {
+  field: FieldType,
+  discardPile: CardType[]
+): { field: FieldType; money: number; discardPile: CardType[] } => {
   const newField = { ...field };
+  const newDiscardPile = [...discardPile];
   if (newField.crops.quantity === 0) {
     console.log("no crops to harvest");
-    return { field, money: 0 };
+    return { field, money: 0, discardPile };
   } else {
     //find the price of the card
     const cardDetails = cardData.find(
@@ -57,9 +59,13 @@ export const harvest = (
       }
     });
 
+    //add cards to discard pile
+    for (let i = 0; i < newField.crops.quantity; i++) {
+      newDiscardPile.push(cardDetails as CardType);
+    }
     const money = closestIndex !== null ? closestIndex + 1 : 0;
     newField.crops.quantity = 0;
     newField.crops.cardId = null;
-    return { field: newField, money };
+    return { field: newField, money, discardPile: newDiscardPile };
   }
 };

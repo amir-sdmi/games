@@ -15,6 +15,7 @@ export default function Gameboard({
     availableManures,
     availableTractors,
     deck,
+    discardPile,
     endTurnReceivingCardsCount,
   } = game;
 
@@ -43,7 +44,11 @@ export default function Gameboard({
   };
 
   const handleHarvest = (fieldIndex: number, player: PlayerType) => {
-    const { field: newField, money } = harvest(player.fields[fieldIndex]);
+    const {
+      field: newField,
+      money,
+      discardPile: newDiscardPile,
+    } = harvest(player.fields[fieldIndex], discardPile);
     setGame({
       ...game,
       players: players.map((p) =>
@@ -55,12 +60,28 @@ export default function Gameboard({
             }
           : p
       ),
+      discardPile: newDiscardPile,
+    });
+  };
+  //Todo: prevent to add more cards to hand if deck is under 2 or 3 cards
+  const handleAddCardsToHand = (player: PlayerType) => {
+    const newHand = [...player.hand];
+    for (let i = 0; i < endTurnReceivingCardsCount; i++) {
+      newHand.push(deck.pop() as CardType);
+    }
+    setGame({
+      ...game,
+      players: players.map((p) =>
+        p.id === player.id ? { ...p, hand: newHand } : p
+      ),
     });
   };
   return (
     <div>
       <div>
         <h1>Gameboard</h1>
+        <p>deck : {deck.length} cards</p>
+        <p>discards : {discardPile.length}</p>
         <p>players number: {players.length}</p>
         <p>current player: {currentPlayer}</p>
         <p>available manures: {availableManures}</p>
@@ -75,6 +96,12 @@ export default function Gameboard({
             key={player.id}
           >
             <div>
+              <button
+                className="border border-green-500 bg-gray-200 rounded px-2 text-gray-700"
+                onClick={() => handleAddCardsToHand(player)}
+              >
+                Add Cards To Hand
+              </button>
               <p>id :{player.id}</p>
               <p>name :{player.playerName}</p>
               <p>tractor : {player.tractor ? "yes" : "no"}</p>

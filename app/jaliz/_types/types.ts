@@ -41,6 +41,7 @@ type GameType = {
   players: PlayerType[];
   currentPlayer: PlayerType["id"];
   deck: CardType[];
+  discardPile: CardType[];
   availableManures: number;
   availableTractors: number;
   endTurnReceivingCardsCount: 2 | 3;

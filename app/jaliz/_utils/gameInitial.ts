@@ -24,7 +24,7 @@ const activeCardsPerPlayer = (
 ): { from: number; to: number } => {
   switch (playerCount) {
     case 3:
-      return { from: 1, to: 9 };
+      return { from: 1, to: 2 };
     case 4:
       return { from: 0, to: 9 };
     case 5:

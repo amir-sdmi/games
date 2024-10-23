@@ -2,7 +2,7 @@
 
 import { GameType } from "../_types/types";
 import { createNewGame } from "../_utils/gameInitial";
-import { cards } from "../_utils/cardData";
+import { cardData } from "../_utils/cardData";
 
 export default function PlayersForm({
   players,
@@ -23,7 +23,7 @@ export default function PlayersForm({
         onSubmit={(e) => {
           e.preventDefault();
           setPlayers(players);
-          setGame(createNewGame(players, cards));
+          setGame(createNewGame(players, cardData));
           setGameStatus("playing");
         }}
       >

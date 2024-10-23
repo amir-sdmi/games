@@ -29,10 +29,12 @@ type CardType = {
   id: number;
   name: string;
   totalQuantity: number;
-  oneCoinPrice: 2 | 3 | 4;
-  twoCoinPrice: 3 | 4 | 5 | 6 | null;
-  threeCoinPrice: 4 | 5 | 6 | 7 | 8;
-  fourCoinPrice: 7 | 8 | 9 | 10 | null;
+  value: [
+    2 | 3 | 4,
+    3 | 4 | 5 | 6 | null,
+    4 | 5 | 6 | 7 | 8,
+    7 | 8 | 9 | 10 | null,
+  ];
 };
 
 type GameType = {

@@ -1,5 +1,6 @@
 import { CardType, GameType, PlayerType } from "../_types/types";
-import { plant } from "../_utils/actions";
+import { harvest, plant } from "../_utils/actions";
+import { cardData } from "../_utils/cardData";
 
 export default function Gameboard({
   game,
@@ -35,6 +36,22 @@ export default function Gameboard({
               ...p,
               hand: newHand,
               fields: p.fields.map((f, i) => (i === fieldIndex ? newField : f)),
+            }
+          : p
+      ),
+    });
+  };
+
+  const handleHarvest = (fieldIndex: number, player: PlayerType) => {
+    const { field: newField, money } = harvest(player.fields[fieldIndex]);
+    setGame({
+      ...game,
+      players: players.map((p) =>
+        p.id === player.id
+          ? {
+              ...p,
+              fields: p.fields.map((f, i) => (i === fieldIndex ? newField : f)),
+              money: p.money + money,
             }
           : p
       ),
@@ -94,13 +111,22 @@ export default function Gameboard({
               {player.fields.map((field, fieldIndex) => (
                 <li className="border border-green-600 w-32" key={fieldIndex}>
                   <p>id: {field.id}</p>
+                  <button
+                    className="border border-green-500 bg-gray-200 rounded px-2 text-gray-700"
+                    onClick={() => handleHarvest(fieldIndex, player)}
+                  >
+                    Harvest
+                  </button>
                   <p>manure : {field.manure ? "yes" : "no"}</p>
                   {field.crops.quantity > 0 && (
                     <div>
                       <p>crop: {field.crops.cardId}</p>
                       <p>
                         name:{" "}
-                        {deck.find((c) => c.id === field.crops.cardId)?.name}
+                        {
+                          cardData.find((c) => c.id === field.crops.cardId)
+                            ?.name
+                        }
                       </p>
                       <p>quantity: {field.crops.quantity}</p>
                     </div>

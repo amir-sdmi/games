@@ -16,12 +16,12 @@ type HatType = {
 };
 type FieldType = {
   id: number;
-  crops: CropType[];
+  crops: CropType;
   manure: boolean;
 };
 
 type CropType = {
-  cardId: number;
+  cardId: number | null;
   quantity: number;
 };
 
@@ -39,6 +39,18 @@ type GameType = {
   players: PlayerType[];
   currentPlayer: PlayerType["id"];
   deck: CardType[];
+  availableManures: number;
+  availableTractors: number;
+  endTurnReceivingCardsCount: 2 | 3;
 };
+type GameStatus = "initial" | "playing" | "finished";
 
-export type { PlayerType, CardType, HatType, FieldType, CropType, GameType };
+export type {
+  PlayerType,
+  CardType,
+  HatType,
+  FieldType,
+  CropType,
+  GameType,
+  GameStatus,
+};

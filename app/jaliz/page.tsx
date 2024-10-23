@@ -1,10 +1,9 @@
 "use client";
 import { useState } from "react";
 import PlayersForm from "./_components/PlayersForm";
-import { GameType } from "./_types/types";
+import { GameStatus, GameType } from "./_types/types";
 import Gameboard from "./_components/Gameboard";
 
-type GameStatus = "initial" | "playing" | "finished";
 export default function JalizPage() {
   const [players, setPlayers] = useState<string[]>([
     "player 1",
@@ -24,7 +23,9 @@ export default function JalizPage() {
           setGame={setGame}
         />
       )}
-      {gameStatus === "playing" && game && <Gameboard game={game} />}
+      {gameStatus === "playing" && game && (
+        <Gameboard game={game} setGame={setGame} />
+      )}
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { CardType, GameType, PlayerType } from "../_types/types";
-import { harvest, plant } from "../_utils/actions";
+import { addCardsToHand, harvest, plant } from "../_utils/actions";
 import { cardData } from "../_utils/cardData";
+import { nextRound } from "../_utils/gameMaster";
 
 export default function Gameboard({
   game,
@@ -17,6 +18,7 @@ export default function Gameboard({
     deck,
     discardPile,
     endTurnReceivingCardsCount,
+    round,
   } = game;
 
   const handlePlant = (
@@ -63,23 +65,109 @@ export default function Gameboard({
       discardPile: newDiscardPile,
     });
   };
-  //Todo: prevent to add more cards to hand if deck is under 2 or 3 cards
+
   const handleAddCardsToHand = (player: PlayerType) => {
-    const newHand = [...player.hand];
-    for (let i = 0; i < endTurnReceivingCardsCount; i++) {
-      newHand.push(deck.pop() as CardType);
+    let updatedGame = game;
+    if (updatedGame.deck.length < updatedGame.endTurnReceivingCardsCount) {
+      console.log("next round");
+      updatedGame = nextRound(updatedGame);
     }
+    updatedGame = addCardsToHand(updatedGame, player);
+    setGame(updatedGame);
+  };
+  // const handleBuy = (
+  //   player: PlayerType,
+  //   type: "field" | "manuref0" | "manure" | "tractor" | "cards",
+  //   price: number,
+  //   fieldId?: number
+  // ) => {
+  //   const updatedPlayer = { ...player };
+  //   switch (type) {
+  //     case "field":
+  //       if (updatedPlayer.money >= price && updatedPlayer.fields.length < 3) {
+  //         updatedPlayer.money -= price;
+  //         updatedPlayer.fields.push({
+  //           id: updatedPlayer.fields.length,
+  //           crops: { cardId: null, quantity: 0 },
+  //           manure: false,
+  //         });
+  //       }
+  //     case "manure":
+  //       if (updatedPlayer.money >= price) {
+  //         updatedPlayer.money -= price;
+  //         updatedPlayer.fields[fieldId as number].manure = true;
+  //       }
+  //   }
+  //   setGame({
+  //     ...game,
+  //     players: players.map((p) => (p.id === player.id ? updatedPlayer : p)),
+  //   });
+  // };
+  const handleBuy = (
+    player: PlayerType,
+    type: "field" | "manure" | "tractor" | "cards",
+    price: number,
+    fieldId?: number
+  ) => {
+    const updatedPlayer = { ...player };
+    const updatedDeck = [...deck];
+    switch (type) {
+      case "field":
+        if (updatedPlayer.money >= price && updatedPlayer.fields.length < 3) {
+          updatedPlayer.money -= price;
+          updatedPlayer.fields.push({
+            id: updatedPlayer.fields.length,
+            crops: { cardId: null, quantity: 0 },
+            manure: false,
+          });
+        }
+        break;
+
+      case "manure":
+        if (typeof fieldId === "number" && updatedPlayer.fields[fieldId]) {
+          if (updatedPlayer.money >= price) {
+            updatedPlayer.money -= price;
+            updatedPlayer.fields[fieldId].manure = true;
+          }
+        } else {
+          console.error("Invalid fieldId or field does not exist");
+        }
+        break;
+
+      case "tractor":
+        if (updatedPlayer.money >= price && !updatedPlayer.tractor) {
+          updatedPlayer.money -= price;
+          updatedPlayer.tractor = true;
+        }
+
+        break;
+
+      case "cards":
+        if (updatedPlayer.money >= price && !updatedPlayer.hasBoughtCards) {
+          updatedPlayer.money -= price;
+          updatedPlayer.hasBoughtCards = true;
+          for (let i = 0; i < 3; i++) {
+            updatedPlayer.hand.push(updatedDeck.pop() as CardType);
+          }
+        }
+        break;
+
+      default:
+        console.error("Unknown purchase type");
+    }
+
     setGame({
       ...game,
-      players: players.map((p) =>
-        p.id === player.id ? { ...p, hand: newHand } : p
-      ),
+      players: players.map((p) => (p.id === player.id ? updatedPlayer : p)),
+      deck: updatedDeck,
     });
   };
+
   return (
     <div>
       <div>
         <h1>Gameboard</h1>
+        <p>round : {round}</p>
         <p>deck : {deck.length} cards</p>
         <p>discards : {discardPile.length}</p>
         <p>players number: {players.length}</p>
@@ -89,6 +177,7 @@ export default function Gameboard({
         <p>end turn receiving cards count: {endTurnReceivingCardsCount}</p>
         <hr />
       </div>
+
       <div>
         {players.map((player) => (
           <div
@@ -96,12 +185,14 @@ export default function Gameboard({
             key={player.id}
           >
             <div>
-              <button
-                className="border border-green-500 bg-gray-200 rounded px-2 text-gray-700"
-                onClick={() => handleAddCardsToHand(player)}
-              >
-                Add Cards To Hand
-              </button>
+              {player.id === currentPlayer && (
+                <button
+                  className="border border-green-500 bg-gray-200 rounded px-2 text-gray-700"
+                  onClick={() => handleAddCardsToHand(player)}
+                >
+                  Add Cards To Hand
+                </button>
+              )}
               <p>id :{player.id}</p>
               <p>name :{player.playerName}</p>
               <p>tractor : {player.tractor ? "yes" : "no"}</p>
@@ -116,23 +207,53 @@ export default function Gameboard({
                 {player.hand.map((card, handIndex) => (
                   <li key={handIndex}>
                     {card.name}
-                    <div>
-                      <button
-                        className="border border-green-500 bg-gray-200 rounded px-2 text-gray-700"
-                        onClick={() => handlePlant(0, card, player)}
-                      >
-                        F1
-                      </button>
-                      <button
-                        className="border border-green-500 bg-gray-200 rounded px-2 text-gray-700"
-                        onClick={() => handlePlant(1, card, player)}
-                      >
-                        F2
-                      </button>
-                    </div>
+                    {player.id === currentPlayer && (
+                      <div>
+                        <button
+                          className="border border-green-500 bg-gray-200 rounded px-2 text-gray-700"
+                          onClick={() => handlePlant(0, card, player)}
+                        >
+                          F1
+                        </button>
+                        <button
+                          className="border border-green-500 bg-gray-200 rounded px-2 text-gray-700"
+                          onClick={() => handlePlant(1, card, player)}
+                        >
+                          F2
+                        </button>
+                        {player.fields.length > 2 && (
+                          <button
+                            className="border border-green-500 bg-gray-200 rounded px-2 text-gray-700"
+                            onClick={() => handlePlant(2, card, player)}
+                          >
+                            F3
+                          </button>
+                        )}
+                      </div>
+                    )}
                   </li>
                 ))}
               </ol>
+            </div>
+            <div className="border border-purple-700 flex flex-col gap-2">
+              <p>actions :</p>
+
+              {!player.hasBoughtCards && (
+                <button
+                  className="border border-green-500 bg-gray-200 rounded px-2 text-gray-700"
+                  onClick={() => handleBuy(player, "cards", 1)}
+                >
+                  Buy Cards
+                </button>
+              )}
+              {!player.tractor && (
+                <button
+                  className="border border-green-500 bg-gray-200 rounded px-2 text-gray-700"
+                  onClick={() => handleBuy(player, "tractor", 2)}
+                >
+                  Buy Tractor
+                </button>
+              )}
             </div>
             <ul className="border border-yellow-700 flex gap-4 ">
               {player.fields.map((field, fieldIndex) => (
@@ -141,10 +262,20 @@ export default function Gameboard({
                   <button
                     className="border border-green-500 bg-gray-200 rounded px-2 text-gray-700"
                     onClick={() => handleHarvest(fieldIndex, player)}
+                    disabled={field.crops.quantity === 0}
                   >
                     Harvest
                   </button>
+
                   <p>manure : {field.manure ? "yes" : "no"}</p>
+                  {!field.manure && (
+                    <button
+                      className="border border-green-500 bg-gray-200 rounded px-2 text-gray-700"
+                      onClick={() => handleBuy(player, "manure", 2, field.id)}
+                    >
+                      Buy manure
+                    </button>
+                  )}
                   {field.crops.quantity > 0 && (
                     <div>
                       <p>crop: {field.crops.cardId}</p>
@@ -160,6 +291,14 @@ export default function Gameboard({
                   )}
                 </li>
               ))}
+              {player.fields.length < 3 && (
+                <button
+                  className="border border-green-500 bg-gray-200 rounded px-2 text-gray-700"
+                  onClick={() => handleBuy(player, "field", 3)}
+                >
+                  + Buy Field for 3 coins
+                </button>
+              )}
             </ul>
           </div>
         ))}

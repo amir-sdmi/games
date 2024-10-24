@@ -1,4 +1,4 @@
-import { CardType, FieldType } from "../_types/types";
+import { CardType, FieldType, GameType, PlayerType } from "../_types/types";
 import { cardData } from "./cardData";
 
 export const plant = (
@@ -68,4 +68,25 @@ export const harvest = (
     newField.crops.cardId = null;
     return { field: newField, money, discardPile: newDiscardPile };
   }
+};
+
+export const addCardsToHand = (game: GameType, player: PlayerType) => {
+  const newDeck = [...game.deck];
+  const newHand = [...player.hand];
+
+  for (let i = 0; i < game.endTurnReceivingCardsCount; i++) {
+    const card = newDeck.pop();
+    if (card) newHand.push(card);
+  }
+
+  const newCurrentPlayer =
+    game.currentPlayer < game.players.length - 1 ? game.currentPlayer + 1 : 0;
+  return {
+    ...game,
+    currentPlayer: newCurrentPlayer,
+    deck: newDeck,
+    players: game.players.map((p: PlayerType) =>
+      p.id === player.id ? { ...p, hand: newHand } : p
+    ),
+  };
 };

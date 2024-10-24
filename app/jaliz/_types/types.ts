@@ -8,6 +8,7 @@ type PlayerType = {
   playerHat: HatType;
   tractor: boolean;
   otherPlayersHats: HatType[];
+  hasBoughtCards: boolean;
 };
 
 type HatType = {
@@ -42,18 +43,11 @@ type GameType = {
   currentPlayer: PlayerType["id"];
   deck: CardType[];
   discardPile: CardType[];
+  round: 1 | 2 | 3 | 4;
   availableManures: number;
   availableTractors: number;
   endTurnReceivingCardsCount: 2 | 3;
+  gameStatus: "initial" | "playing" | "finished";
 };
-type GameStatus = "initial" | "playing" | "finished";
 
-export type {
-  PlayerType,
-  CardType,
-  HatType,
-  FieldType,
-  CropType,
-  GameType,
-  GameStatus,
-};
+export type { PlayerType, CardType, HatType, FieldType, CropType, GameType };

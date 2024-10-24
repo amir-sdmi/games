@@ -5,7 +5,7 @@ const createNewPlayer = (id: number, playerName: string): PlayerType => {
   return {
     id,
     playerName,
-    money: 0,
+    money: 15,
     hand: [],
     fields: [
       { id: 0, crops: { cardId: null, quantity: 0 }, manure: false },
@@ -15,6 +15,7 @@ const createNewPlayer = (id: number, playerName: string): PlayerType => {
     playerHat: { ownerId: id, ownedById: id },
     tractor: false,
     otherPlayersHats: [],
+    hasBoughtCards: false,
   };
 };
 
@@ -57,7 +58,7 @@ const endTurnReceivingCards = (playerCount: number) => {
 
 export const createNewGame = (
   playersNames: string[],
-  cards: CardType[]
+  cardData: CardType[]
 ): GameType => {
   const players = playersNames.map((playerName, index) =>
     createNewPlayer(index, playerName)
@@ -65,7 +66,7 @@ export const createNewGame = (
   //choosing initial player randomly
   const currentPlayer = players[Math.floor(Math.random() * players.length)].id;
   //create deck of cards, randomly but with some rules, about number of players
-  const filteredCards = cards.filter(
+  const filteredCards = cardData.filter(
     (card) =>
       card.id >= activeCardsPerPlayer(players.length).from &&
       card.id <= activeCardsPerPlayer(players.length).to
@@ -86,20 +87,16 @@ export const createNewGame = (
   });
 
   const discardPile: CardType[] = [];
-  //manures, one more than players
-  const availableManures = players.length + 1;
 
-  //availableTractors
-  const availableTractors = players.length;
-
-  const endTurnReceivingCardsCount = endTurnReceivingCards(players.length);
   return {
     players,
     currentPlayer,
     deck,
     discardPile,
-    availableManures,
-    availableTractors,
-    endTurnReceivingCardsCount,
+    availableManures: players.length + 1,
+    availableTractors: players.length,
+    endTurnReceivingCardsCount: endTurnReceivingCards(players.length),
+    round: 1,
+    gameStatus: "initial",
   };
 };

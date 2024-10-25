@@ -53,6 +53,8 @@ type GameType = {
 type CurrentPlayer = {
   id: PlayerType["id"];
   turnStatus: "planting" | "marketting" | "addingCardsToHand";
+  plantCounts: number;
+  markettingCards: CardType[];
 };
 
 export type {

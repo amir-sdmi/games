@@ -67,6 +67,8 @@ export const createNewGame = (
   const currentPlayer: CurrentPlayer = {
     id: players[Math.floor(Math.random() * players.length)].id,
     turnStatus: "planting",
+    plantCounts: 0,
+    markettingCards: [],
   };
   //create deck of cards, randomly but with some rules, about number of players
   const filteredCards = cardData.filter(

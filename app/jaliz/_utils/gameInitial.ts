@@ -1,5 +1,5 @@
 import { shuffleArray } from "@/utils/utils";
-import { CardType, GameType, PlayerType } from "../_types/types";
+import { CardType, CurrentPlayer, GameType, PlayerType } from "../_types/types";
 
 const createNewPlayer = (id: number, playerName: string): PlayerType => {
   return {
@@ -64,7 +64,10 @@ export const createNewGame = (
     createNewPlayer(index, playerName)
   );
   //choosing initial player randomly
-  const currentPlayer = players[Math.floor(Math.random() * players.length)].id;
+  const currentPlayer: CurrentPlayer = {
+    id: players[Math.floor(Math.random() * players.length)].id,
+    turnStatus: "planting",
+  };
   //create deck of cards, randomly but with some rules, about number of players
   const filteredCards = cardData.filter(
     (card) =>

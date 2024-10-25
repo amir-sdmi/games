@@ -40,7 +40,7 @@ type CardType = {
 
 type GameType = {
   players: PlayerType[];
-  currentPlayer: PlayerType["id"];
+  currentPlayer: CurrentPlayer;
   deck: CardType[];
   discardPile: CardType[];
   round: 1 | 2 | 3 | 4;
@@ -50,4 +50,17 @@ type GameType = {
   gameStatus: "initial" | "playing" | "finished";
 };
 
-export type { PlayerType, CardType, HatType, FieldType, CropType, GameType };
+type CurrentPlayer = {
+  id: PlayerType["id"];
+  turnStatus: "planting" | "marketting" | "addingCardsToHand";
+};
+
+export type {
+  PlayerType,
+  CardType,
+  HatType,
+  FieldType,
+  CropType,
+  GameType,
+  CurrentPlayer,
+};

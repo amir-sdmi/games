@@ -1,4 +1,10 @@
-import { CardType, FieldType, GameType, PlayerType } from "../_types/types";
+import {
+  CardType,
+  CurrentPlayer,
+  FieldType,
+  GameType,
+  PlayerType,
+} from "../_types/types";
 import { cardData } from "./cardData";
 
 export const plant = (
@@ -79,8 +85,13 @@ export const addCardsToHand = (game: GameType, player: PlayerType) => {
     if (card) newHand.push(card);
   }
 
-  const newCurrentPlayer =
-    game.currentPlayer < game.players.length - 1 ? game.currentPlayer + 1 : 0;
+  const newCurrentPlayer: CurrentPlayer = {
+    id:
+      game.currentPlayer.id < game.players.length - 1
+        ? game.currentPlayer.id + 1
+        : 0,
+    turnStatus: "planting",
+  };
   return {
     ...game,
     currentPlayer: newCurrentPlayer,

@@ -1,10 +1,17 @@
 import { shuffleArray } from "@/utils/utils";
-import { CardType, CurrentPlayer, GameType, PlayerType } from "../_types/types";
+import {
+  CardType,
+  CurrentPlayer,
+  GameType,
+  PlayerType,
+  TradeOffer,
+} from "../_types/types";
 
 const createNewPlayer = (id: number, playerName: string): PlayerType => {
   return {
     id,
     playerName,
+    //TODO: change money to 0
     money: 15,
     hand: [],
     fields: [
@@ -26,7 +33,8 @@ const activeCardsPerPlayer = (
 ): { from: number; to: number } => {
   switch (playerCount) {
     case 3:
-      return { from: 1, to: 9 };
+      //TODO: change this to 1 to 9
+      return { from: 1, to: 3 };
     case 4:
       return { from: 0, to: 9 };
     case 5:
@@ -89,7 +97,9 @@ export const createNewGame = (
   //giving five card to each player
   players.forEach((player) => {
     for (let i = 0; i < 5; i++) {
-      player.hand.push(deck.pop() as CardType);
+      const card = deck.pop() as CardType;
+      const newCard = { ...card, inHandOrMarketId: i };
+      player.hand.push(newCard);
     }
   });
 
@@ -105,5 +115,17 @@ export const createNewGame = (
     endTurnReceivingCardsCount: endTurnReceivingCards(players.length),
     round: 1,
     gameStatus: "initial",
+  };
+};
+
+export const emptyTempTradeOffer = (
+  currentPlayerId: PlayerType["id"]
+): TradeOffer => {
+  return {
+    proposerId: currentPlayerId,
+    cardsFromProposersHand: [],
+    cardsFromMarket: [],
+    otherPlayersHats: [],
+    includePlayerHat: false,
   };
 };

@@ -51,7 +51,12 @@ export const buy = (
         updatedPlayer.money -= price;
         updatedPlayer.hasBoughtCards = true;
         for (let i = 0; i < 3; i++) {
-          updatedPlayer.hand.push(updatedDeck.pop() as CardType);
+          const newCard = updatedDeck.pop() as CardType;
+          const updatedCard = {
+            ...newCard,
+            inHandOrMarketId: updatedPlayer.hand.length,
+          };
+          updatedPlayer.hand.push(updatedCard);
         }
       }
       break;

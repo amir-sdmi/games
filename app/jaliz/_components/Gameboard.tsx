@@ -3,7 +3,6 @@ import {
   CardType,
   CurrentPlayer,
   GameType,
-  HatType,
   PlayerType,
   TradeOffer,
 } from "../_types/types";
@@ -14,7 +13,13 @@ import { plantFromHand } from "../_utils/actions/plantFromHand";
 import { plantFromMarket } from "../_utils/actions/plantFromMarket";
 import { cardData } from "../_utils/cardData";
 import { nextRound } from "../_utils/gameMaster";
+import Button from "./ui/Button";
+import { emptyTempTradeOffer } from "../_utils/gameInitial";
+import isEqual from "lodash/isEqual";
 
+//TODO:Important! inHandleOrMarketId is not perfect ! the problem is .lenght for id is not suitable. it should should be max id + 1. next thing is they should be completely unique, maybe it has some issues when they are duplicated. goje1 from two users might happen
+
+//TODO: BUGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG sequence of adding to tradeTemp, is importat now, but it shouldnt ! the problem is if user add goje1, goje2, bademjoon1, it should not be different with another order of it ! but now is, ! this is disaster ! make something dude !!!!!!!
 export default function Gameboard({
   game,
   setGame,
@@ -32,13 +37,9 @@ export default function Gameboard({
     endTurnReceivingCardsCount,
     round,
   } = game;
-  const [tradeTemp, setTradeTemp] = useState<TradeOffer>({
-    proposerId: currentPlayer.id,
-    cardsFromProposersHand: [],
-    cardsFromMarket: [],
-    otherPlayersHats: [],
-    includePlayerHat: false,
-  });
+  const [tradeTemp, setTradeTemp] = useState(
+    emptyTempTradeOffer(currentPlayer.id)
+  );
   const handlePlantFromMarket = (fieldIndex: number, card: CardType) => {
     const { currentPlayer: newCurrentPlayer, player } = plantFromMarket(
       currentPlayer,
@@ -139,12 +140,20 @@ export default function Gameboard({
     });
   };
 
-  const handleShowCards = () => {
+  const handleShowMarketCards = () => {
     const newDeck = [...deck];
-
+    const newMarkettingCards = currentPlayer.markettingCards;
+    for (let i = 0; i < 2; i++) {
+      const card = newDeck.pop() as CardType;
+      const newCard = {
+        ...card,
+        inHandOrMarketId: newMarkettingCards.length,
+      };
+      newMarkettingCards.push(newCard);
+    }
     const newCurrentPlayer: CurrentPlayer = {
       ...currentPlayer,
-      markettingCards: newDeck.splice(0, 2),
+      markettingCards: newMarkettingCards,
       turnStatus: "marketting",
     };
 
@@ -156,6 +165,14 @@ export default function Gameboard({
   };
 
   const handleAddHandCardsToTrade = (handCard: CardType) => {
+    //if card is already in trade, do nothing
+    if (
+      tradeTemp.cardsFromProposersHand.some(
+        (c) => c.inHandOrMarketId === handCard.inHandOrMarketId
+      )
+    )
+      return;
+
     const newTradeTemp = { ...tradeTemp };
     newTradeTemp.cardsFromProposersHand.push(handCard);
     setTradeTemp(newTradeTemp);
@@ -175,9 +192,69 @@ export default function Gameboard({
     newTradeTemp.cardsFromMarket.push(marketCard);
     setTradeTemp(newTradeTemp);
   };
+  //TODO: ux is aweful ! make it better
+  const handleNewTradeOffer = () => {
+    //if tradeTemp is empty, do nothing
+    if (isEqual(tradeTemp, emptyTempTradeOffer(currentPlayer.id))) return;
+    //if tradeTemp is already in tradeOffers, do nothing
+    if (
+      currentPlayer.tradeOffers.some((tradeOffer) =>
+        isEqual(tradeOffer, tradeTemp)
+      )
+    )
+      return;
 
+    //if tradeTemp is already in tradeOffers, do nothing (based on cards type and count)
+    currentPlayer.tradeOffers.map((tradeOffer) => {
+      if (
+        tradeOffer.cardsFromProposersHand.length ===
+        tradeTemp.cardsFromProposersHand.length
+      ) {
+        console.log("same length");
+        const arr = tradeOffer.cardsFromProposersHand.filter((cOffer) =>
+          tradeTemp.cardsFromProposersHand.some(
+            (cTemp) => cOffer.id === cTemp.id
+          )
+        );
+        if (isEqual(arr, tradeOffer)) return;
+      }
+    });
+
+    setGame({
+      ...game,
+      currentPlayer: {
+        ...currentPlayer,
+        tradeOffers: [...currentPlayer.tradeOffers, tradeTemp],
+      },
+    });
+    setTradeTemp(emptyTempTradeOffer(currentPlayer.id));
+  };
+  const handleRemoveTradeOffer = (tradeOfferToDelete: TradeOffer) => {
+    setGame({
+      ...game,
+      currentPlayer: {
+        ...currentPlayer,
+        tradeOffers: currentPlayer.tradeOffers.filter(
+          (tradeOffer) => !isEqual(tradeOffer, tradeOfferToDelete)
+        ),
+      },
+    });
+  };
+
+  const isCardInTrade = (card: CardType) => {
+    if (
+      tradeTemp.cardsFromProposersHand.some(
+        (c) => c.inHandOrMarketId === card.inHandOrMarketId
+      )
+    ) {
+      return true;
+    } else return false;
+  };
   return (
     <div>
+      {
+        //Game details}
+      }
       <div>
         <h1>Gameboard</h1>
         <p>round : {round}</p>
@@ -191,135 +268,29 @@ export default function Gameboard({
         <p>available tractors: {availableTractors}</p>
         <p>end turn receiving cards count: {endTurnReceivingCardsCount}</p>
         <hr />
-      </div>
-      {currentPlayer.turnStatus === "marketting" && (
-        <div className="flex gap-2 border border-green-700">
-          <div className="border border-blue-500">
-            <p>Market !</p>
-            <button className="border border-green-500 bg-gray-200 rounded px-2 text-gray-700">
-              trade
-            </button>
-            {currentPlayer.markettingCards.map((card, index) => (
-              <div key={index}>
-                <p>card name: {card.name}</p>
-                <div>
-                  <button
-                    className="border border-green-500 bg-gray-200 rounded px-2 text-gray-700"
-                    onClick={() => handlePlantFromMarket(0, card)}
-                  >
-                    F1
-                  </button>
-                  <button
-                    className="border border-green-500 bg-gray-200 rounded px-2 text-gray-700"
-                    onClick={() => handlePlantFromMarket(1, card)}
-                  >
-                    F2
-                  </button>
-                  {players[currentPlayer.id].fields.length > 2 && (
-                    <button
-                      className="border border-green-500 bg-gray-200 rounded px-2 text-gray-700"
-                      onClick={() => handlePlantFromMarket(2, card)}
-                    >
-                      F3
-                    </button>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="border border-rose-800 ">
-            <button
-              className="border border-green-500 bg-gray-200 rounded px-2 text-gray-700"
-              onClick={() =>
-                setGame({
-                  ...game,
-                  currentPlayer: {
-                    ...currentPlayer,
-                    tradeOffers: [...currentPlayer.tradeOffers, tradeTemp],
-                  },
-                })
-              }
-            >
-              trade
-            </button>
-            <p>hand :</p>
-            <ol>
-              {players[currentPlayer.id].hand.map((card, index) => (
-                <li className="flex gap-2" key={index}>
-                  <p>{card.name}</p>
-                  <button
-                    className="border border-green-500 bg-gray-200 rounded px-1 text-gray-700 disabled:bg-gray-400"
-                    onClick={() => handleAddHandCardsToTrade(card)}
-                  >
-                    +
-                  </button>
-                </li>
-              ))}
-            </ol>
-            <p>hats :</p>
-            {players[currentPlayer.id].playerHat.ownedById ===
-              currentPlayer.id && (
-              <div className="flex gap-2">
-                <p>my hat</p>
-                <button
-                  className="border border-green-500 bg-gray-200 rounded px-1 text-gray-700 disabled:bg-gray-400"
-                  onClick={() => handleAddPlayerHatToTrade()}
-                >
-                  +
-                </button>
-              </div>
-            )}
-            {players[currentPlayer.id].otherPlayersHats.map(
-              (hatOwnerId, index) => (
-                <div key={index} className="flex gap-2">
-                  <p>{players[hatOwnerId].playerName} hat</p>
-                  <button
-                    className="border border-green-500 bg-gray-200 rounded px-1 text-gray-700 disabled:bg-gray-400"
-                    onClick={() => handleOthersHatsToTrade(hatOwnerId)}
-                  >
-                    +
-                  </button>
-                </div>
-              )
-            )}
-            <p>Market Cards : </p>
-            <ol>
-              {currentPlayer.markettingCards.map((card, index) => (
-                <li className="flex gap-2" key={index}>
-                  <p>{card.name}</p>
-                  <button
-                    className="border border-green-500 bg-gray-200 rounded px-1 text-gray-700 disabled:bg-gray-400"
-                    onClick={() => handleAddMarketCardToTrade(card)}
-                  >
-                    +
-                  </button>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </div>
-      )}
+      </div>{" "}
       <div>
         {players.map((player) => (
           <div
             className="border border-red-300 mb-2 flex gap-2"
             key={player.id}
           >
+            {
+              //player Hand
+            }
             <div>
               {player.id === currentPlayer.id && (
                 <div>
-                  <button
-                    className="border border-green-500 bg-gray-200 rounded px-2 text-gray-700 disabled:bg-gray-400"
-                    onClick={() => handleShowCards()}
+                  <Button
+                    onClick={() => handleShowMarketCards()}
                     disabled={
                       currentPlayer.turnStatus !== "planting" ||
                       currentPlayer.plantCounts < 1
                     }
                   >
                     start marketting
-                  </button>
-                  <button
-                    className="border border-green-500 bg-gray-200 rounded px-2 text-gray-700 disabled:bg-gray-400"
+                  </Button>
+                  <Button
                     onClick={() => handleAddCardsToHand(player)}
                     disabled={
                       //TODO : this is not totally correct, later should change it
@@ -329,7 +300,7 @@ export default function Gameboard({
                     }
                   >
                     Add Cards To Hand
-                  </button>
+                  </Button>
                 </div>
               )}
               <p>id :{player.id}</p>
@@ -345,33 +316,30 @@ export default function Gameboard({
               <ol className="border border-blue-500">
                 {player.hand.map((card, handIndex) => (
                   <li key={handIndex}>
-                    {card.name}
+                    {card.name} {card.inHandOrMarketId}
                     {player.id === currentPlayer.id &&
                       currentPlayer.turnStatus === "planting" &&
                       (currentPlayer.plantCounts < 2 ||
                         (currentPlayer.plantCounts < 3 && player.tractor)) && (
                         <div>
-                          <button
-                            className="border border-green-500 bg-gray-200 rounded px-2 text-gray-700"
+                          <Button
                             onClick={() => handlePlantFromHand(0, card, player)}
                           >
                             F1
-                          </button>
-                          <button
-                            className="border border-green-500 bg-gray-200 rounded px-2 text-gray-700"
+                          </Button>
+                          <Button
                             onClick={() => handlePlantFromHand(1, card, player)}
                           >
                             F2
-                          </button>
+                          </Button>
                           {player.fields.length > 2 && (
-                            <button
-                              className="border border-green-500 bg-gray-200 rounded px-2 text-gray-700"
+                            <Button
                               onClick={() =>
                                 handlePlantFromHand(2, card, player)
                               }
                             >
                               F3
-                            </button>
+                            </Button>
                           )}
                         </div>
                       )}
@@ -379,47 +347,44 @@ export default function Gameboard({
                 ))}
               </ol>
             </div>
-
+            {
+              //player buyingActions
+            }
             <div className="border border-purple-700 flex flex-col gap-2">
-              <p>actions :</p>
+              <p>Buy :</p>
 
               {!player.hasBoughtCards && (
-                <button
-                  className="border border-green-500 bg-gray-200 rounded px-2 text-gray-700"
-                  onClick={() => handleBuy(player, "cards", 1)}
-                >
+                <Button onClick={() => handleBuy(player, "cards", 1)}>
                   Buy Cards
-                </button>
+                </Button>
               )}
               {!player.tractor && (
-                <button
-                  className="border border-green-500 bg-gray-200 rounded px-2 text-gray-700"
-                  onClick={() => handleBuy(player, "tractor", 2)}
-                >
+                <Button onClick={() => handleBuy(player, "tractor", 2)}>
                   Buy Tractor
-                </button>
+                </Button>
               )}
             </div>
+            {
+              //fields
+            }
             <ul className="border border-yellow-700 flex gap-4 ">
               {player.fields.map((field, fieldIndex) => (
                 <li className="border border-green-600 w-32" key={fieldIndex}>
                   <p>id: {field.id}</p>
-                  <button
-                    className="border border-green-500 bg-gray-200 rounded px-2 text-gray-700"
+                  <Button
                     onClick={() => handleHarvest(fieldIndex, player)}
                     disabled={field.crops.quantity === 0}
                   >
                     Harvest
-                  </button>
+                  </Button>
 
                   <p>manure : {field.manure ? "yes" : "no"}</p>
                   {!field.manure && availableManures > 0 && (
-                    <button
-                      className="border border-green-500 bg-gray-200 rounded px-2 text-gray-700"
+                    <Button
                       onClick={() => handleBuy(player, "manure", 2, field.id)}
                     >
                       Buy manure
-                    </button>
+                    </Button>
                   )}
                   {field.crops.quantity > 0 && (
                     <div>
@@ -437,14 +402,147 @@ export default function Gameboard({
                 </li>
               ))}
               {player.fields.length < 3 && (
-                <button
-                  className="border border-green-500 bg-gray-200 rounded px-2 text-gray-700"
-                  onClick={() => handleBuy(player, "field", 3)}
-                >
+                <Button onClick={() => handleBuy(player, "field", 3)}>
                   + Buy Field for 3 coins
-                </button>
+                </Button>
               )}
             </ul>
+            {
+              //Trade
+            }
+            {currentPlayer.id === player.id &&
+              currentPlayer.turnStatus === "marketting" && (
+                <div className="flex gap-2 border border-green-700">
+                  <div className="border border-blue-500">
+                    <p>Market !</p>
+                    {currentPlayer.markettingCards.map((card, index) => (
+                      <div key={index}>
+                        <p>
+                          card name: {card.name}
+                          {card.inHandOrMarketId}
+                        </p>
+                        <div>
+                          <Button
+                            onClick={() => handlePlantFromMarket(0, card)}
+                          >
+                            F1
+                          </Button>
+                          <Button
+                            onClick={() => handlePlantFromMarket(1, card)}
+                          >
+                            F2
+                          </Button>
+                          {players[currentPlayer.id].fields.length > 2 && (
+                            <Button
+                              onClick={() => handlePlantFromMarket(2, card)}
+                            >
+                              F3
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="border border-rose-800 ">
+                    <Button onClick={() => handleNewTradeOffer()}>trade</Button>
+                    <p>hand :</p>
+                    <ol>
+                      {players[currentPlayer.id].hand.map((card, index) => (
+                        <li className="flex gap-2 " key={index}>
+                          <p
+                            className={
+                              isCardInTrade(card) ? "text-red-500" : ""
+                            }
+                          >
+                            {card.name} {card.inHandOrMarketId}
+                          </p>
+                          <Button
+                            onClick={() => handleAddHandCardsToTrade(card)}
+                          >
+                            +
+                          </Button>
+                        </li>
+                      ))}
+                    </ol>
+                    <p>hats :</p>
+                    {players[currentPlayer.id].playerHat.ownedById ===
+                      currentPlayer.id && (
+                      <div className="flex gap-2">
+                        <p>my hat</p>
+                        <Button onClick={() => handleAddPlayerHatToTrade()}>
+                          +
+                        </Button>
+                      </div>
+                    )}
+                    {players[currentPlayer.id].otherPlayersHats.map(
+                      (hatOwnerId, index) => (
+                        <div key={index} className="flex gap-2">
+                          <p>{players[hatOwnerId].playerName} hat</p>
+                          <Button
+                            onClick={() => handleOthersHatsToTrade(hatOwnerId)}
+                          >
+                            +
+                          </Button>
+                        </div>
+                      )
+                    )}
+                    <p>Market Cards : </p>
+                    <ol>
+                      {currentPlayer.markettingCards.map((card, index) => (
+                        <li className="flex gap-2" key={index}>
+                          <p>
+                            {card.name}
+                            {card.inHandOrMarketId}
+                          </p>
+                          <Button
+                            onClick={() => handleAddMarketCardToTrade(card)}
+                          >
+                            +
+                          </Button>
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
+                  <div className="border-2 border-pink-500">
+                    <p>trade offers:</p>
+                    {currentPlayer.tradeOffers.map((tradeOffer, index) => (
+                      <div className="border-2 border-green-400" key={index}>
+                        cards from proposers hand:
+                        <ol>
+                          {tradeOffer.cardsFromProposersHand.map((card, i) => (
+                            <li key={i}>
+                              {card.name}
+                              {card.inHandOrMarketId}
+                            </li>
+                          ))}
+                        </ol>
+                        cards from market:
+                        <ol>
+                          {tradeOffer.cardsFromMarket.map((card, i) => (
+                            <li key={i}>
+                              {card.name}
+                              {card.inHandOrMarketId}
+                            </li>
+                          ))}
+                        </ol>
+                        other players hats:
+                        <ol>
+                          {tradeOffer.otherPlayersHats.map((hat, i) => (
+                            <li key={i}>{players[hat].playerName}</li>
+                          ))}
+                        </ol>
+                        current player hat:{" "}
+                        {tradeOffer.includePlayerHat ? "yes" : "no"}
+                        <Button
+                          onClick={() => handleRemoveTradeOffer(tradeOffer)}
+                        >
+                          Discard
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
           </div>
         ))}
       </div>

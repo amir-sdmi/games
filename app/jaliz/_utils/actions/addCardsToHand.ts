@@ -1,12 +1,18 @@
-import { CurrentPlayer, GameType, PlayerType } from "../../_types/types";
+import {
+  CardType,
+  CurrentPlayer,
+  GameType,
+  PlayerType,
+} from "../../_types/types";
 
 export const addCardsToHand = (game: GameType, player: PlayerType) => {
   const newDeck = [...game.deck];
   const newHand = [...player.hand];
 
   for (let i = 0; i < game.endTurnReceivingCardsCount; i++) {
-    const card = newDeck.pop();
-    if (card) newHand.push(card);
+    const card = newDeck.pop() as CardType;
+    const newCard: CardType = { ...card, inHandOrMarketId: newHand.length };
+    newHand.push(newCard);
   }
 
   const newCurrentPlayer: CurrentPlayer = {

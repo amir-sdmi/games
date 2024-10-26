@@ -7,8 +7,9 @@ type PlayerType = {
   thirdField: boolean;
   playerHat: HatType;
   tractor: boolean;
-  otherPlayersHats: HatType[];
+  otherPlayersHats: PlayerType["id"][];
   hasBoughtCards: boolean;
+  tradeOffersToCurrentPlayer: TradeOffer[];
 };
 
 type HatType = {
@@ -55,6 +56,15 @@ type CurrentPlayer = {
   turnStatus: "planting" | "marketting" | "addingCardsToHand";
   plantCounts: number;
   markettingCards: CardType[];
+  tradeOffers: TradeOffer[];
+};
+
+type TradeOffer = {
+  proposerId: PlayerType["id"];
+  cardsFromProposersHand: CardType[];
+  cardsFromMarket: CardType[];
+  otherPlayersHats: PlayerType["id"][];
+  includePlayerHat: boolean;
 };
 
 export type {
@@ -65,4 +75,5 @@ export type {
   CropType,
   GameType,
   CurrentPlayer,
+  TradeOffer,
 };

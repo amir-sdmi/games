@@ -17,6 +17,7 @@ export const addCardsToHand = (game: GameType, player: PlayerType) => {
     turnStatus: "planting",
     plantCounts: 0,
     markettingCards: [],
+    tradeOffers: [],
   };
   return {
     ...game,

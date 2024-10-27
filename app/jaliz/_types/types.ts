@@ -67,8 +67,9 @@ type TradeOffer = {
   otherPlayersHats: PlayerType["id"][];
   includePlayerHat: boolean;
 };
-
+type BuyType = "manure" | "tractor" | "cards" | "field";
 export type {
+  BuyType,
   PlayerType,
   CardType,
   HatType,

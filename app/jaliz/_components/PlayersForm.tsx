@@ -7,12 +7,10 @@ import { cardData } from "../_utils/cardData";
 export default function PlayersForm({
   players,
   setPlayers,
-  setGameStatus,
   setGame,
 }: {
   players: string[];
   setPlayers: (players: string[]) => void;
-  setGameStatus: (gameStatus: "initial" | "playing" | "finished") => void;
   setGame: (game: GameType) => void;
 }) {
   return (
@@ -23,8 +21,10 @@ export default function PlayersForm({
         onSubmit={(e) => {
           e.preventDefault();
           setPlayers(players);
-          setGame(createNewGame(players, cardData));
-          setGameStatus("playing");
+          setGame({
+            ...createNewGame(players, cardData),
+            gameStatus: "playing",
+          });
         }}
       >
         {players.map((player, i) => {

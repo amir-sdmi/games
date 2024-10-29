@@ -1,5 +1,5 @@
 import {
-  CardType,
+  CardsType,
   CurrentPlayer,
   FieldType,
   PlayerType,
@@ -9,7 +9,7 @@ export const plantFromMarket = (
   currentPlayer: CurrentPlayer,
   fieldIndex: FieldType["id"],
   player: PlayerType,
-  card: CardType
+  card: CardsType
 ) => {
   const newCurrentPlayer: CurrentPlayer = { ...currentPlayer };
   const newField: FieldType = {
@@ -17,23 +17,18 @@ export const plantFromMarket = (
   };
 
   //plant card
-  if (newField.crops.quantity === 0 || newField.crops.cardId === card.id) {
+  if (newField.crops.quantity === 0 || newField.crops.id === card.id) {
     newField.crops.quantity++;
-    newField.crops.cardId = card.id;
+    newField.crops.id = card.id;
   } else {
     console.log(
       "you can not plant this card here, some other crops has been planted here before"
     );
     return { currentPlayer, player };
   }
-  //remove card
-  const indexOfCardInMarket = newCurrentPlayer.markettingCards.indexOf(card);
-  if (indexOfCardInMarket !== -1) {
-    newCurrentPlayer.markettingCards.splice(indexOfCardInMarket, 1);
-  } else {
-    console.log("card not found in market");
-    return { currentPlayer, player };
-  }
+
+  //remove card from market
+  newCurrentPlayer.markettingCards.pop();
 
   return {
     currentPlayer: newCurrentPlayer,

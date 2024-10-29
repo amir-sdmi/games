@@ -1,3 +1,4 @@
+import Link from "next/link";
 import "./globals.css";
 
 const games = [
@@ -24,28 +25,31 @@ export default function RootLayout({
             <nav>
               <ul className="flex space-x-4 mt-4">
                 <li>
-                  <a href="/" className="text-blue-500 hover:underline">
+                  <Link href="/" className="text-blue-500 hover:underline">
                     Home
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="/about" className="text-blue-500 hover:underline">
+                  <Link href="/about" className="text-blue-500 hover:underline">
                     About
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="/contact" className="text-blue-500 hover:underline">
+                  <Link
+                    href="/contact"
+                    className="text-blue-500 hover:underline"
+                  >
                     Contact
-                  </a>
+                  </Link>
                 </li>
                 {games.map((game) => (
                   <li key={game.href}>
-                    <a
+                    <Link
                       href={game.href}
                       className="text-blue-500 hover:underline"
                     >
                       {game.name}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>

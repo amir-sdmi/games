@@ -1,19 +1,19 @@
-import { CardType, CurrentPlayer, FieldType } from "../../_types/types";
+import { CardsType, CurrentPlayer, FieldType } from "../../_types/types";
 
 export const plantFromHand = (
-  hand: CardType[],
+  hand: CardsType[],
   field: FieldType,
-  card: CardType,
+  card: CardsType,
   currentPlayer: CurrentPlayer
-): { hand: CardType[]; field: FieldType; currentPlayer: CurrentPlayer } => {
+): { hand: CardsType[]; field: FieldType; currentPlayer: CurrentPlayer } => {
   const newHand = [...hand];
   const newField = { ...field };
   const newCurrentPlayer = { ...currentPlayer };
 
   //check if same card has been planted before, or field is empty, plant the card
-  if (newField.crops.quantity === 0 || newField.crops.cardId === card.id) {
+  if (newField.crops.quantity === 0 || newField.crops.id === card.id) {
     newField.crops.quantity++;
-    newField.crops.cardId = card.id;
+    newField.crops.id = card.id;
     newCurrentPlayer.plantCounts++;
   } else {
     console.log(
@@ -23,13 +23,16 @@ export const plantFromHand = (
   }
 
   //remove card from hand
-  const indexOfCardInHand = newHand.indexOf(card);
-  if (indexOfCardInHand !== -1) {
-    newHand.splice(indexOfCardInHand, 1);
-  } else {
-    console.log("card not found in hand");
-    return { hand, field, currentPlayer };
-  }
+  const updatedHand = newHand.map((newHandCard) => {
+    if (newHandCard.id === card.id) {
+      newHandCard.quantity--;
+    }
+    return newHandCard;
+  });
 
-  return { hand: newHand, field: newField, currentPlayer: newCurrentPlayer };
+  return {
+    hand: updatedHand,
+    field: newField,
+    currentPlayer: newCurrentPlayer,
+  };
 };

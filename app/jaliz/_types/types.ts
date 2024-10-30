@@ -62,6 +62,7 @@ type TradeOffer = {
   proposerId: PlayerType["id"];
   cardsFromProposersHand: CardsType[];
   cardsFromMarket: CardsType[];
+  requestCards: CardsType[];
   otherPlayersHats: PlayerType["id"][];
   includePlayerHat: boolean;
 };

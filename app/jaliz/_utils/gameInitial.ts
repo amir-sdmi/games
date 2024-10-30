@@ -133,6 +133,7 @@ export const emptyTempTradeOffer = (
     proposerId: currentPlayerId,
     cardsFromProposersHand: [],
     cardsFromMarket: [],
+    requestCards: [],
     otherPlayersHats: [],
     includePlayerHat: false,
   };

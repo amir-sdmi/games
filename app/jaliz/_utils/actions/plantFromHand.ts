@@ -23,12 +23,14 @@ export const plantFromHand = (
   }
 
   //remove card from hand
-  const updatedHand = newHand.map((newHandCard) => {
-    if (newHandCard.id === card.id) {
-      newHandCard.quantity--;
-    }
-    return newHandCard;
-  });
+  const updatedHand = newHand
+    .map((newHandCard) => {
+      if (newHandCard.id === card.id) {
+        newHandCard.quantity--;
+      }
+      return newHandCard;
+    })
+    .filter((newHandCard) => newHandCard.quantity > 0);
 
   return {
     hand: updatedHand,

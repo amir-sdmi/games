@@ -19,8 +19,12 @@ export default function Marketting({
   const [tradeTemp, setTradeTemp] = useState(
     emptyTempTradeOffer(currentPlayer.id)
   );
-  //handlers
+  const [selectedMarketCards, setSelectedMarketCards] = useState<boolean[]>([
+    false,
+    false,
+  ]);
 
+  //handlers
   const handlePlantFromMarket = (fieldIndex: number, card: CardsType) => {
     const { currentPlayer: newCurrentPlayer, player } = plantFromMarket(
       currentPlayer,
@@ -35,82 +39,44 @@ export default function Marketting({
     });
   };
 
-  const handleAddMarketCardToTradeTemp = (marketCard: CardsType) => {
+  const handleAddMarketCardToTradeTemp = (
+    marketCard: CardsType,
+    index: number
+  ) => {
     const newTempTrade: TradeOffer = { ...tradeTemp };
-    // Find if the card already exists in hand
+    // Find if the card already exists in temp
     const cardInTrade = tradeTemp.cardsFromMarket.find(
       (c) => c.id === marketCard.id
     );
     if (cardInTrade) {
-      // Increase quantity if card is already in hand
+      // Increase quantity if card is already in temp
       cardInTrade.quantity++;
       newTempTrade.cardsFromMarket = tradeTemp.cardsFromMarket.map((c) =>
         c.id === marketCard.id ? cardInTrade : c
       );
     } else {
-      // Add the card to hand with quantity 1 if not already present
+      // Add the card to temp with quantity 1 if not already present
       newTempTrade.cardsFromMarket.push({ ...marketCard, quantity: 1 });
     }
+    setTradeTemp(newTempTrade);
+    const newMarketCards = [...selectedMarketCards];
+    newMarketCards[index] = true;
+    setSelectedMarketCards(newMarketCards);
+  };
+
+  //TODO: ux is aweful ! make it better
+
+  const handleRemoveTradeOffer = (tradeOfferToDelete: TradeOffer) => {
     setGame({
       ...game,
       currentPlayer: {
         ...currentPlayer,
-        markettingCards: currentPlayer.markettingCards.filter(
-          (c) => c.id !== marketCard.id
+        tradeOffers: currentPlayer.tradeOffers.filter(
+          (tradeOffer) => !isEqual(tradeOffer, tradeOfferToDelete)
         ),
       },
     });
-    setTradeTemp(newTempTrade);
   };
-
-  //TODO: ux is aweful ! make it better
-  // const handleNewTradeOffer = () => {
-  //   //if tradeTemp is empty, do nothing
-  //   if (isEqual(tradeTemp, emptyTempTradeOffer(currentPlayer.id))) return;
-  //   //if tradeTemp is already in tradeOffers, do nothing
-  //   if (
-  //     currentPlayer.tradeOffers.some((tradeOffer) =>
-  //       isEqual(tradeOffer, tradeTemp)
-  //     )
-  //   )
-  //     return;
-
-  //   //if tradeTemp is already in tradeOffers, do nothing (based on cards type and count)
-  //   currentPlayer.tradeOffers.map((tradeOffer) => {
-  //     if (
-  //       tradeOffer.cardsFromProposersHand.length ===
-  //       tradeTemp.cardsFromProposersHand.length
-  //     ) {
-  //       console.log("same length");
-  //       const arr = tradeOffer.cardsFromProposersHand.filter((cOffer) =>
-  //         tradeTemp.cardsFromProposersHand.some(
-  //           (cTemp) => cOffer.id === cTemp.id
-  //         )
-  //       );
-  //       if (isEqual(arr, tradeOffer)) return;
-  //     }
-  //   });
-
-  //   setGame({
-  //     ...game,
-  //     currentPlayer: {
-  //       ...currentPlayer,
-  //       tradeOffers: [...currentPlayer.tradeOffers, tradeTemp],
-  //     },
-  //   });
-  //   setTradeTemp(emptyTempTradeOffer(currentPlayer.id));
-  // };
-  // const handleRemoveTradeOffer = (tradeOfferToDelete: TradeOffer) => {
-  //   setGame({
-  //     ...game,
-  //     currentPlayer: {
-  //       ...currentPlayer,
-  //       tradeOffers: currentPlayer.tradeOffers.filter(
-  //         (tradeOffer) => !isEqual(tradeOffer, tradeOfferToDelete)
-  //       ),
-  //     },
-  //   });
-  // };
 
   return (
     <div className="flex gap-2 border border-green-700">
@@ -127,7 +93,10 @@ export default function Marketting({
                   F3
                 </Button>
               )}
-              <Button onClick={() => handleAddMarketCardToTradeTemp(card)}>
+              <Button
+                onClick={() => handleAddMarketCardToTradeTemp(card, index)}
+                disabled={selectedMarketCards[index]}
+              >
                 Add
               </Button>
             </div>
@@ -145,6 +114,8 @@ export default function Marketting({
         setTradeTemp={setTradeTemp}
         game={game}
         setGame={setGame}
+        selectedMarketCards={selectedMarketCards}
+        setSelectedMarketCards={setSelectedMarketCards}
       />
       {/* <div className="border-2 border-pink-500">
         <p>trade offers:</p>

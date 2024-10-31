@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { emptyTempTradeOffer } from "../../_utils/gameInitial";
+import { emptyTempTradeOffer } from "../../../../server/services/gameInitial";
 
 import TradeSetting from "./TradeSetting";
 import TradeTemp from "./TradeTemp";
 import TradeOffers from "./TradeOffers";
 import MarketCards from "./MarketCards";
-import { GameAndSetGameProps } from "../../_types/props";
+import { GameAndSetGameProps } from "../../props";
 
 export default function Marketing({ game, setGame }: GameAndSetGameProps) {
   const { currentPlayer, players } = game;

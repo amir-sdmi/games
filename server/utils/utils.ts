@@ -1,5 +1,5 @@
-import { CardInformationType, CardsType } from "../_types/types";
-import { cardData } from "./cardData";
+import { CardInformationType, CardsType } from "../types/types";
+import { cardData } from "@/server/data/cardData";
 
 export function fromDeckToHand(card: CardInformationType, hand: CardsType[]) {
   const updatedHand = [...hand];
@@ -49,3 +49,12 @@ export const updateCardQuantityMinusOne = (
     .map((c) => (c.id === cardId ? { ...c, quantity: c.quantity - 1 } : c))
     .filter((c) => c.quantity > 0);
 };
+
+export function shuffleArray<T>(array: T[]): T[] {
+  const newArray = [...array];
+  for (let i = newArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  }
+  return newArray;
+}

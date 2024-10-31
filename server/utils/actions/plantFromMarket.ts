@@ -3,7 +3,7 @@ import {
   CurrentPlayer,
   FieldType,
   PlayerType,
-} from "../../_types/types";
+} from "../../types/types";
 
 export const plantFromMarket = (
   currentPlayer: CurrentPlayer,

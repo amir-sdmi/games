@@ -1,7 +1,7 @@
-import { cardName } from "../../_utils/utils";
+import { cardName } from "../../../../server/utils/utils";
 import Button from "../ui/Button";
-import { emptyTempTradeOffer } from "../../_utils/gameInitial";
-import { GameAndSetGameProps } from "../../_types/props";
+import { emptyTempTradeOffer } from "../../../../server/services/gameInitial";
+import { GameAndSetGameProps } from "../../props";
 
 export default function TradeOffers({ game, setGame }: GameAndSetGameProps) {
   const { currentPlayer, players } = game;

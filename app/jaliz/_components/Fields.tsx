@@ -1,6 +1,6 @@
-import { BuyType, GameType, PlayerType } from "../_types/types";
-import { harvest } from "../_utils/actions/harvest";
-import { cardData } from "../_utils/cardData";
+import { BuyType, GameType, PlayerType } from "../../../server/types/types";
+import { harvest } from "../../../server/utils/actions/harvest";
+import { cardData } from "@/server/data/cardData";
 import Button from "./ui/Button";
 interface FieldsProps {
   player: PlayerType;

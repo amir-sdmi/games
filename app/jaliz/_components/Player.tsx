@@ -1,5 +1,5 @@
-import { BuyType, GameType, PlayerType } from "../_types/types";
-import { buy } from "../_utils/actions/buy";
+import { BuyType, GameType, PlayerType } from "../../../server/types/types";
+import { buy } from "../../../server/utils/actions/buy";
 import Fields from "./Fields";
 import PlayerBuyingActions from "./PlayerBuyingActions";
 import PlayerDetails from "./PlayerDetails";

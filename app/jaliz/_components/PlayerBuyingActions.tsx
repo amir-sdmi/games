@@ -1,4 +1,4 @@
-import { BuyType, PlayerType } from "../_types/types";
+import { BuyType, PlayerType } from "../../../server/types/types";
 import Button from "./ui/Button";
 interface PlayerBuyingActionsProps {
   player: PlayerType;

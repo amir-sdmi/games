@@ -3,10 +3,10 @@ import {
   CurrentPlayer,
   PlayerType,
   TradeOffer,
-} from "../../_types/types";
+} from "../../../../server/types/types";
 import Button from "../ui/Button";
-import { cardName } from "../../_utils/utils";
-import { cardData } from "../../_utils/cardData";
+import { cardName } from "../../../../server/utils/utils";
+import { cardData } from "@/server/data/cardData";
 interface TradeSettingProps {
   currentPlayer: CurrentPlayer;
   players: PlayerType[];

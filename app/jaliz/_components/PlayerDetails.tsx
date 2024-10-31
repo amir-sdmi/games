@@ -4,11 +4,11 @@ import {
   CurrentPlayer,
   GameType,
   PlayerType,
-} from "../_types/types";
-import { addCardsToHand } from "../_utils/actions/addCardsToHand";
-import { plantFromHand } from "../_utils/actions/plantFromHand";
-import { nextRound } from "../_utils/gameMaster";
-import { cardName } from "../_utils/utils";
+} from "../../../server/types/types";
+import { addCardsToHand } from "../../../server/utils/actions/addCardsToHand";
+import { plantFromHand } from "../../../server/utils/actions/plantFromHand";
+import { nextRound } from "../../../server/utils/gameMaster";
+import { cardName } from "../../../server/utils/utils";
 import Button from "./ui/Button";
 interface PlayerDetailsProps {
   player: PlayerType;

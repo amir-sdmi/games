@@ -1,6 +1,6 @@
-import { shuffleArray } from "@/utils/utils";
-import { CardsType, GameType } from "../_types/types";
-import { cardData } from "./cardData";
+import { shuffleArray } from "@/server/utils/utils";
+import { CardsType, GameType } from "../types/types";
+import { cardData } from "@/server/data/cardData";
 export const nextRound = (game: GameType): GameType => {
   const { deck, discardPile, round } = game;
   console.log("deck is under 2 or 3 cards");

@@ -3,8 +3,8 @@ import {
   CurrentPlayer,
   GameType,
   PlayerType,
-} from "../../_types/types";
-import { emptyTempTradeOffer } from "../gameInitial";
+} from "../../types/types";
+import { emptyTempTradeOffer } from "../../services/gameInitial";
 import { fromDeckToHand } from "../utils";
 
 export const addCardsToHand = (game: GameType, player: PlayerType) => {

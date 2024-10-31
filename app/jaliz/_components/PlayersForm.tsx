@@ -1,8 +1,9 @@
 "use client";
 
-import { GameType } from "../_types/types";
-import { createNewGame } from "../_utils/gameInitial";
-import { cardData } from "../_utils/cardData";
+import { GameType } from "../../../server/types/types";
+import { createNewGame } from "../../../server/services/gameInitial";
+import { cardData } from "@/server/data/cardData";
+
 interface PlayerFormProps {
   players: string[];
   setPlayers: (players: string[]) => void;

@@ -4,10 +4,13 @@ import {
   CurrentPlayer,
   GameType,
   TradeOffer,
-} from "../../_types/types";
-import { cardName, updateCardQuantityMinusOne } from "../../_utils/utils";
+} from "../../../../server/types/types";
+import {
+  cardName,
+  updateCardQuantityMinusOne,
+} from "../../../../server/utils/utils";
 import Button from "../ui/Button";
-import { emptyTempTradeOffer } from "../../_utils/gameInitial";
+import { emptyTempTradeOffer } from "../../../../server/services/gameInitial";
 interface TradeShowProps {
   tradeTemp: TradeOffer;
   setTradeTemp: (tradeTemp: TradeOffer) => void;

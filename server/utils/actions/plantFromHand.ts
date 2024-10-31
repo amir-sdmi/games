@@ -1,4 +1,4 @@
-import { CardsType, CurrentPlayer, FieldType } from "../../_types/types";
+import { CardsType, CurrentPlayer, FieldType } from "../../types/types";
 
 export const plantFromHand = (
   hand: CardsType[],

@@ -1,5 +1,9 @@
-import { CardsType, FieldType } from "../../_types/types";
-import { cardData } from "../cardData";
+import {
+  CardInformationType,
+  CardsType,
+  FieldType,
+} from "@/server/types/types";
+import { cardData } from "@/server/data/cardData";
 
 export const harvest = (
   field: FieldType,
@@ -13,6 +17,9 @@ export const harvest = (
   } else {
     //find the price of the card
     const cardDetails = cardData.find((card) => card.id === newField.crops.id);
+    if (!cardDetails) {
+      throw new Error(`Card with id ${newField.crops.id} not found`);
+    }
     let closestIndex: null | number = null;
     let closestValue = 0;
     cardDetails?.value.forEach((value, index) => {

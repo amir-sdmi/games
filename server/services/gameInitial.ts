@@ -1,4 +1,4 @@
-import { shuffleArray } from "@/utils/utils";
+import { shuffleArray } from "@/server/utils/utils";
 import {
   CardInformationType,
   CardsType,
@@ -6,8 +6,8 @@ import {
   GameType,
   PlayerType,
   TradeOffer,
-} from "../_types/types";
-import { fromDeckToHand } from "./utils";
+} from "@/server/types/types";
+import { fromDeckToHand } from "../utils/utils";
 
 const createNewPlayer = (id: number, playerName: string): PlayerType => {
   return {

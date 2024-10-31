@@ -1,4 +1,4 @@
-import { CardInformationType, PlayerType } from "../../_types/types";
+import { CardInformationType, PlayerType } from "../../types/types";
 import { fromDeckToHand } from "../utils";
 
 export const buy = (

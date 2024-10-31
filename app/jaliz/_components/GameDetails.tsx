@@ -1,4 +1,4 @@
-import { GameType } from "../_types/types";
+import { GameType } from "../../../server/types/types";
 
 export default function GameDetails({ game }: { game: GameType }) {
   const {

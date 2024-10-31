@@ -1,4 +1,4 @@
-import { GameType } from "./types";
+import { GameType } from "../../server/types/types";
 
 export interface GameAndSetGameProps {
   game: GameType;

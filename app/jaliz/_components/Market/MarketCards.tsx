@@ -1,6 +1,10 @@
-import { CardsType, GameType, TradeOffer } from "../../_types/types";
-import { plantFromMarket } from "../../_utils/actions/plantFromMarket";
-import { cardName } from "../../_utils/utils";
+import {
+  CardsType,
+  GameType,
+  TradeOffer,
+} from "../../../../server/types/types";
+import { plantFromMarket } from "../../../../server/utils/actions/plantFromMarket";
+import { cardName } from "../../../../server/utils/utils";
 import Button from "../ui/Button";
 interface MarketCardsProps {
   game: GameType;

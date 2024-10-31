@@ -1,10 +1,10 @@
 "use client";
 import { useState } from "react";
 import PlayersForm from "./_components/PlayersForm";
-import { GameType } from "./_types/types";
+import { GameType } from "../../server/types/types";
 import Gameboard from "./_components/Gameboard";
-import { cardData } from "./_utils/cardData";
-import { createNewGame } from "./_utils/gameInitial";
+import { cardData } from "@/server/data/cardData";
+import { createNewGame } from "../../server/services/gameInitial";
 
 export default function JalizPage() {
   const [players, setPlayers] = useState<string[]>([

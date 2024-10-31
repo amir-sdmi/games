@@ -1,4 +1,4 @@
-import { GameAndSetGameProps } from "../_types/props";
+import { GameAndSetGameProps } from "../props";
 import GameDetails from "./GameDetails";
 import Marketing from "./Market/Marketing";
 import Player from "./Player";

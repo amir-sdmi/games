@@ -8,7 +8,6 @@ import {
   TradeOffer,
 } from "../_types/types";
 import { fromDeckToHand } from "./utils";
-import { cardData } from "./cardData";
 
 const createNewPlayer = (id: number, playerName: string): PlayerType => {
   return {
@@ -37,7 +36,7 @@ const activeCardsPerPlayer = (
   switch (playerCount) {
     case 3:
       //TODO: change this to 1 to 9
-      return { from: 1, to: 6 };
+      return { from: 1, to: 3 };
     case 4:
       return { from: 0, to: 9 };
     case 5:

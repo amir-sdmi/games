@@ -20,7 +20,7 @@ export default function PlayerDetails({
   game: GameType;
   setGame: (game: GameType) => void;
 }) {
-  const { currentPlayer, players, deck } = game;
+  const { currentPlayer, players } = game;
   const handlePlantFromHand = (
     fieldIndex: number,
     card: CardsType,
@@ -63,24 +63,31 @@ export default function PlayerDetails({
   };
 
   const handleShowMarketCards = () => {
-    const newDeck = [...deck];
-    const newMarkettingCards = currentPlayer.markettingCards;
+    let updatedGame = { ...game };
+    if (updatedGame.deck.length < 2) {
+      console.log("next round");
+      updatedGame = nextRound(updatedGame);
+    }
+    const newDeck = [...updatedGame.deck];
+    const newMarkettingCards = updatedGame.currentPlayer.markettingCards;
     for (let i = 0; i < 2; i++) {
       const card = newDeck.pop() as CardInformationType;
-      const newCard: CardsType = {
-        id: card.id,
-        quantity: 1,
-      };
-      newMarkettingCards.push(newCard);
+      if (card) {
+        const newCard: CardsType = {
+          id: card.id,
+          quantity: 1,
+        };
+        newMarkettingCards.push(newCard);
+      }
     }
     const newCurrentPlayer: CurrentPlayer = {
-      ...currentPlayer,
+      ...updatedGame.currentPlayer,
       markettingCards: newMarkettingCards,
       turnStatus: "marketting",
     };
 
     setGame({
-      ...game,
+      ...updatedGame,
       currentPlayer: newCurrentPlayer,
       deck: newDeck,
     });

@@ -79,7 +79,7 @@ export const createNewGame = (
     id: randomId,
     turnStatus: "planting",
     plantCounts: 0,
-    markettingCards: [],
+    marketingCards: [],
     tradeOffer: emptyTempTradeOffer(randomId),
   };
   //create deck of cards, randomly but with some rules, about number of players

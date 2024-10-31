@@ -5,10 +5,17 @@ import {
   GameType,
   TradeOffer,
 } from "../../_types/types";
-import { cardName } from "../../_utils/utils";
+import { cardName, updateCardQuantityMinusOne } from "../../_utils/utils";
 import Button from "../ui/Button";
 import { emptyTempTradeOffer } from "../../_utils/gameInitial";
-
+interface TradeShowProps {
+  tradeTemp: TradeOffer;
+  setTradeTemp: (tradeTemp: TradeOffer) => void;
+  game: GameType;
+  setGame: (game: GameType) => void;
+  selectedMarketCards: boolean[];
+  setSelectedMarketCards: (selectedMarketCards: boolean[]) => void;
+}
 export default function TradeTempShow({
   tradeTemp,
   setTradeTemp,
@@ -16,82 +23,54 @@ export default function TradeTempShow({
   setGame,
   selectedMarketCards,
   setSelectedMarketCards,
-}: {
-  tradeTemp: TradeOffer;
-  setTradeTemp: (tradeTemp: TradeOffer) => void;
-  game: GameType;
-  setGame: (game: GameType) => void;
-  selectedMarketCards: boolean[];
-  setSelectedMarketCards: (selectedMarketCards: boolean[]) => void;
-}) {
+}: TradeShowProps) {
   const handleRemoveMarketCardFromTempTrade = (cardId: CardsType["id"]) => {
-    const newTradeTemp = { ...tradeTemp };
-    const tempCard = newTradeTemp.cardsFromMarket.find((c) => c.id === cardId);
-    if (tempCard) {
-      if (tempCard.quantity > 0) {
-        tempCard.quantity--;
-      }
-      if (tempCard.quantity === 0) {
-        newTradeTemp.cardsFromMarket = newTradeTemp.cardsFromMarket.filter(
-          (c) => c.id !== cardId
-        );
-      }
-    }
+    const newTradeTemp = {
+      ...tradeTemp,
+      cardsFromMarket: updateCardQuantityMinusOne(
+        tradeTemp.cardsFromMarket,
+        cardId
+      ),
+    };
 
     setTradeTemp(newTradeTemp);
 
     const newCurrentPlayer: CurrentPlayer = { ...game.currentPlayer };
-    // newCurrentPlayer.markettingCards.push({ id: cardId, quantity: 1 });
-    // setGame({ ...game, currentPlayer: newCurrentPlayer });
 
-    const firstDisabledItem = newCurrentPlayer.markettingCards.find(
+    const firstDisabledItem = newCurrentPlayer.marketingCards.find(
       (c) =>
         c.id === cardId &&
-        selectedMarketCards[newCurrentPlayer.markettingCards.indexOf(c)] ===
-          true
+        selectedMarketCards[newCurrentPlayer.marketingCards.indexOf(c)] === true
     );
 
     if (firstDisabledItem) {
       const newSelectedMarketCards = [...selectedMarketCards];
       newSelectedMarketCards[
-        newCurrentPlayer.markettingCards.indexOf(firstDisabledItem)
+        newCurrentPlayer.marketingCards.indexOf(firstDisabledItem)
       ] = false;
       setSelectedMarketCards(newSelectedMarketCards);
     }
   };
   const handleRemoveHandCardsFromTradeTemp = (cardId: CardsType["id"]) => {
-    const newTradeTemp = { ...tradeTemp };
-    const tempCard = newTradeTemp.cardsFromProposersHand.find(
-      (c) => c.id === cardId
-    );
-    if (tempCard) {
-      if (tempCard.quantity > 0) {
-        tempCard.quantity--;
-      }
-      if (tempCard.quantity === 0) {
-        newTradeTemp.cardsFromProposersHand =
-          newTradeTemp.cardsFromProposersHand.filter((c) => c.id !== cardId);
-      }
-    }
+    const newTradeTemp = {
+      ...tradeTemp,
+      cardsFromProposersHand: updateCardQuantityMinusOne(
+        tradeTemp.cardsFromProposersHand,
+        cardId
+      ),
+    };
+
     setTradeTemp(newTradeTemp);
   };
   const handleRemoveFromRequestCards = (cardId: CardsType["id"]) => {
-    const newTradeTemp = { ...tradeTemp };
-    const tempCard = newTradeTemp.requestCards.find((c) => c.id === cardId);
-    if (tempCard) {
-      if (tempCard.quantity > 0) {
-        tempCard.quantity--;
-      }
-      if (tempCard.quantity === 0) {
-        newTradeTemp.requestCards = newTradeTemp.requestCards.filter(
-          (c) => c.id !== cardId
-        );
-      }
-    }
+    const newTradeTemp = {
+      ...tradeTemp,
+      requestCards: updateCardQuantityMinusOne(tradeTemp.requestCards, cardId),
+    };
     setTradeTemp(newTradeTemp);
   };
 
-  const handleAddnewTradeOffer = () => {
+  const handleAddNewTradeOffer = () => {
     //TODO add better ux to inform user thay have to add at least one market card
     if (tradeTemp.cardsFromMarket.length === 0) return;
     const currentPlayer = game.currentPlayer;
@@ -100,23 +79,6 @@ export default function TradeTempShow({
     if (isEqual(tradeTemp, emptyTempTradeOffer(currentPlayer.id))) return;
     //if tradeTemp is already in tradeOffers, do nothing
     if (isEqual(currentPlayer.tradeOffer, tradeTemp)) return;
-
-    //Todo: solve here next time
-    // currentPlayer.tradeOffers.map((tradeOffer) => {
-    //   if (
-    //     tradeOffer.cardsFromProposersHand.length ===
-    //     tradeTemp.cardsFromProposersHand.length
-    //   ) {
-    //     console.log("same length");
-    //     const arr = tradeOffer.cardsFromProposersHand.filter((cOffer) =>
-    //       tradeTemp.cardsFromProposersHand.some(
-    //         (cTemp) => cOffer.id === cTemp.id
-    //       )
-    //     );
-    //     if (isEqual(arr, tradeOffer)) return;
-    //   }
-    // });
-
     setGame({
       ...game,
       currentPlayer: {
@@ -191,7 +153,7 @@ export default function TradeTempShow({
       )}
       <Button
         disabled={tradeTemp.cardsFromMarket.length === 0 ? true : false}
-        onClick={() => handleAddnewTradeOffer()}
+        onClick={() => handleAddNewTradeOffer()}
       >
         Add Trade Offer
       </Button>

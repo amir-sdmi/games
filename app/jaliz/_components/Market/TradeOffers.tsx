@@ -1,15 +1,9 @@
-import { GameType } from "../../_types/types";
 import { cardName } from "../../_utils/utils";
 import Button from "../ui/Button";
 import { emptyTempTradeOffer } from "../../_utils/gameInitial";
+import { GameAndSetGameProps } from "../../_types/props";
 
-export default function TradeOffers({
-  game,
-  setGame,
-}: {
-  game: GameType;
-  setGame: (game: GameType) => void;
-}) {
+export default function TradeOffers({ game, setGame }: GameAndSetGameProps) {
   const { currentPlayer, players } = game;
   const { tradeOffer } = currentPlayer;
   const handleRemoveTradeOffer = () => {
@@ -49,11 +43,13 @@ export default function TradeOffers({
         requested cards:
         <ol>
           {tradeOffer.requestCards.map((card, i) => (
-            <li key={i}>{cardName(card.id)}</li>
+            <li key={i}>
+              {cardName(card.id)} {card.quantity}
+            </li>
           ))}
         </ol>
         current player hat: {tradeOffer.includePlayerHat ? "yes" : "no"}
-        <Button onClick={() => handleRemoveTradeOffer()}>Discard</Button>
+        <Button onClick={handleRemoveTradeOffer}>Discard</Button>
       </div>
     </div>
   );

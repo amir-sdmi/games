@@ -1,10 +1,6 @@
 import { BuyType, PlayerType } from "../_types/types";
 import Button from "./ui/Button";
-
-export default function PlayerBuyingActions({
-  player,
-  handleBuy,
-}: {
+interface PlayerBuyingActionsProps {
   player: PlayerType;
   handleBuy: (
     player: PlayerType,
@@ -12,7 +8,11 @@ export default function PlayerBuyingActions({
     price: number,
     fieldId?: number
   ) => void;
-}) {
+}
+export default function PlayerBuyingActions({
+  player,
+  handleBuy,
+}: PlayerBuyingActionsProps) {
   return (
     <div className="border border-purple-700 flex flex-col gap-2">
       <p>Buy :</p>

@@ -7,18 +7,23 @@ import {
 import Button from "../ui/Button";
 import { cardName } from "../../_utils/utils";
 import { cardData } from "../../_utils/cardData";
-
+interface TradeSettingProps {
+  currentPlayer: CurrentPlayer;
+  players: PlayerType[];
+  tradeTemp: TradeOffer;
+  setTradeTemp: (tradeTemp: TradeOffer) => void;
+}
 export default function TradeSetting({
   tradeTemp,
   setTradeTemp,
   currentPlayer,
   players,
-}: {
-  currentPlayer: CurrentPlayer;
-  players: PlayerType[];
-  tradeTemp: TradeOffer;
-  setTradeTemp: (tradeTemp: TradeOffer) => void;
-}) {
+}: TradeSettingProps) {
+  const player = players[currentPlayer.id];
+  if (!player) {
+    throw new Error("invalid player id");
+  }
+  const { hand, playerHat, otherPlayersHats } = player;
   //handlers
   const handleAddPlayerHatToTrade = () => {
     setTradeTemp({ ...tradeTemp, includePlayerHat: true });
@@ -62,7 +67,7 @@ export default function TradeSetting({
     <div className="border-4 border-rose-800 flex gap-2">
       <div className="border-2 border-yellow-400 ">
         <p>hand :</p>
-        {players[currentPlayer.id].hand.map((card, index) => (
+        {hand.map((card, index) => (
           <div key={index} className="flex gap-2">
             <p>
               {cardName(card.id)}
@@ -85,7 +90,7 @@ export default function TradeSetting({
           </div>
         ))}
         <p>hats :</p>
-        {players[currentPlayer.id].playerHat.ownedById === currentPlayer.id && (
+        {playerHat.ownedById === currentPlayer.id && (
           <div className="flex gap-2">
             <p>my hat</p>
             <Button
@@ -96,7 +101,7 @@ export default function TradeSetting({
             </Button>
           </div>
         )}
-        {players[currentPlayer.id].otherPlayersHats.map((hatOwnerId, index) => (
+        {otherPlayersHats.map((hatOwnerId, index) => (
           <div key={index} className="flex gap-2">
             <p>{players[hatOwnerId].playerName} hat</p>
             <Button onClick={() => handleOthersHatsToTrade(hatOwnerId)}>

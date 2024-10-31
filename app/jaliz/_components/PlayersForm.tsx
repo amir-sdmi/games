@@ -3,16 +3,16 @@
 import { GameType } from "../_types/types";
 import { createNewGame } from "../_utils/gameInitial";
 import { cardData } from "../_utils/cardData";
-
+interface PlayerFormProps {
+  players: string[];
+  setPlayers: (players: string[]) => void;
+  setGame: (game: GameType) => void;
+}
 export default function PlayersForm({
   players,
   setPlayers,
   setGame,
-}: {
-  players: string[];
-  setPlayers: (players: string[]) => void;
-  setGame: (game: GameType) => void;
-}) {
+}: PlayerFormProps) {
   return (
     <>
       <p>please enter the name of players. this game need 3-7 players. </p>

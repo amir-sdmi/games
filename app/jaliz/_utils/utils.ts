@@ -34,3 +34,18 @@ export function showHandCardsSeperately(hand: CardsType[]) {
   });
   return seperatedHand;
 }
+
+export const updateCardQuantityMinusOne = (
+  cards: CardsType[],
+  cardId: CardsType["id"]
+) => {
+  if (!cards || !Array.isArray(cards)) {
+    throw new Error("Cards parameter must be an array");
+  }
+  if (cardId === undefined || cardId === null) {
+    throw new Error("CardId parameter is required");
+  }
+  return cards
+    .map((c) => (c.id === cardId ? { ...c, quantity: c.quantity - 1 } : c))
+    .filter((c) => c.quantity > 0);
+};

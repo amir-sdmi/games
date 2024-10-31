@@ -10,16 +10,17 @@ import { plantFromHand } from "../_utils/actions/plantFromHand";
 import { nextRound } from "../_utils/gameMaster";
 import { cardName } from "../_utils/utils";
 import Button from "./ui/Button";
+interface PlayerDetailsProps {
+  player: PlayerType;
+  game: GameType;
+  setGame: (game: GameType) => void;
+}
 
 export default function PlayerDetails({
   player,
   game,
   setGame,
-}: {
-  player: PlayerType;
-  game: GameType;
-  setGame: (game: GameType) => void;
-}) {
+}: PlayerDetailsProps) {
   const { currentPlayer, players } = game;
   const handlePlantFromHand = (
     fieldIndex: number,
@@ -69,7 +70,7 @@ export default function PlayerDetails({
       updatedGame = nextRound(updatedGame);
     }
     const newDeck = [...updatedGame.deck];
-    const newMarkettingCards = updatedGame.currentPlayer.markettingCards;
+    const newMarketingCards = updatedGame.currentPlayer.marketingCards;
     for (let i = 0; i < 2; i++) {
       const card = newDeck.pop() as CardInformationType;
       if (card) {
@@ -77,13 +78,13 @@ export default function PlayerDetails({
           id: card.id,
           quantity: 1,
         };
-        newMarkettingCards.push(newCard);
+        newMarketingCards.push(newCard);
       }
     }
     const newCurrentPlayer: CurrentPlayer = {
       ...updatedGame.currentPlayer,
-      markettingCards: newMarkettingCards,
-      turnStatus: "marketting",
+      marketingCards: newMarketingCards,
+      turnStatus: "marketing",
     };
 
     setGame({
@@ -104,14 +105,14 @@ export default function PlayerDetails({
               currentPlayer.plantCounts < 1
             }
           >
-            start marketting
+            start marketing
           </Button>
           <Button
             onClick={() => handleAddCardsToHand(player)}
             disabled={
               //TODO : this is not totally correct, later should change it
-              (currentPlayer.markettingCards.length !== 0 &&
-                currentPlayer.turnStatus === "marketting") ||
+              (currentPlayer.marketingCards.length !== 0 &&
+                currentPlayer.turnStatus === "marketing") ||
               currentPlayer.turnStatus === "planting"
             }
           >

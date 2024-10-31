@@ -28,7 +28,7 @@ export const plantFromMarket = (
   }
 
   //remove card from market
-  newCurrentPlayer.markettingCards.pop();
+  newCurrentPlayer.marketingCards.pop();
 
   return {
     currentPlayer: newCurrentPlayer,

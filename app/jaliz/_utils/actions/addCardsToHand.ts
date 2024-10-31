@@ -24,7 +24,7 @@ export const addCardsToHand = (game: GameType, player: PlayerType) => {
     id: nextPlayerId,
     turnStatus: "planting",
     plantCounts: 0,
-    markettingCards: [],
+    marketingCards: [],
     tradeOffer: emptyTempTradeOffer(nextPlayerId),
   };
   return {

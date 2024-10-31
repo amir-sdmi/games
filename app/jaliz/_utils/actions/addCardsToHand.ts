@@ -4,6 +4,7 @@ import {
   GameType,
   PlayerType,
 } from "../../_types/types";
+import { emptyTempTradeOffer } from "../gameInitial";
 import { fromDeckToHand } from "../utils";
 
 export const addCardsToHand = (game: GameType, player: PlayerType) => {
@@ -15,15 +16,16 @@ export const addCardsToHand = (game: GameType, player: PlayerType) => {
     newHand = fromDeckToHand(card, newHand);
   }
 
+  const nextPlayerId =
+    game.currentPlayer.id < game.players.length - 1
+      ? game.currentPlayer.id + 1
+      : 0;
   const newCurrentPlayer: CurrentPlayer = {
-    id:
-      game.currentPlayer.id < game.players.length - 1
-        ? game.currentPlayer.id + 1
-        : 0,
+    id: nextPlayerId,
     turnStatus: "planting",
     plantCounts: 0,
     markettingCards: [],
-    tradeOffers: [],
+    tradeOffer: emptyTempTradeOffer(nextPlayerId),
   };
   return {
     ...game,

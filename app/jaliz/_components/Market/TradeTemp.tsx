@@ -92,16 +92,14 @@ export default function TradeTempShow({
   };
 
   const handleAddnewTradeOffer = () => {
+    //TODO add better ux to inform user thay have to add at least one market card
+    if (tradeTemp.cardsFromMarket.length === 0) return;
     const currentPlayer = game.currentPlayer;
+
     //if tradeTemp is empty, do nothing
     if (isEqual(tradeTemp, emptyTempTradeOffer(currentPlayer.id))) return;
     //if tradeTemp is already in tradeOffers, do nothing
-    if (
-      currentPlayer.tradeOffers.some((tradeOffer) =>
-        isEqual(tradeOffer, tradeTemp)
-      )
-    )
-      return;
+    if (isEqual(currentPlayer.tradeOffer, tradeTemp)) return;
 
     //Todo: solve here next time
     // currentPlayer.tradeOffers.map((tradeOffer) => {
@@ -123,7 +121,7 @@ export default function TradeTempShow({
       ...game,
       currentPlayer: {
         ...currentPlayer,
-        tradeOffers: [...currentPlayer.tradeOffers, tradeTemp],
+        tradeOffer: tradeTemp,
       },
     });
     setTradeTemp(emptyTempTradeOffer(currentPlayer.id));
@@ -191,7 +189,12 @@ export default function TradeTempShow({
           ))}
         </div>
       )}
-      <Button onClick={() => handleAddnewTradeOffer()}>Add Trade Offer</Button>
+      <Button
+        disabled={tradeTemp.cardsFromMarket.length === 0 ? true : false}
+        onClick={() => handleAddnewTradeOffer()}
+      >
+        Add Trade Offer
+      </Button>
     </div>
   );
 }

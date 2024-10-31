@@ -25,7 +25,6 @@ const createNewPlayer = (id: number, playerName: string): PlayerType => {
     tractor: false,
     otherPlayersHats: [],
     hasBoughtCards: false,
-    tradeOffersToCurrentPlayer: [],
   };
 };
 
@@ -75,12 +74,13 @@ export const createNewGame = (
     createNewPlayer(index, playerName)
   );
   //choosing initial player randomly
+  const randomId: number = Math.floor(Math.random() * players.length);
   const currentPlayer: CurrentPlayer = {
-    id: players[Math.floor(Math.random() * players.length)].id,
+    id: randomId,
     turnStatus: "planting",
     plantCounts: 0,
     markettingCards: [],
-    tradeOffers: [],
+    tradeOffer: emptyTempTradeOffer(randomId),
   };
   //create deck of cards, randomly but with some rules, about number of players
   const filteredCards = cardData.filter(

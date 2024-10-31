@@ -1,10 +1,5 @@
 import { useState } from "react";
-import {
-  CardsType,
-  GameType,
-  PlayerType,
-  TradeOffer,
-} from "../../_types/types";
+import { CardsType, GameType, TradeOffer } from "../../_types/types";
 import { emptyTempTradeOffer } from "../../_utils/gameInitial";
 import Button from "../ui/Button";
 import { plantFromMarket } from "../../_utils/actions/plantFromMarket";

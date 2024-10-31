@@ -2,7 +2,14 @@ import { CardsType, GameType, TradeOffer } from "../../_types/types";
 import { plantFromMarket } from "../../_utils/actions/plantFromMarket";
 import { cardName } from "../../_utils/utils";
 import Button from "../ui/Button";
-
+interface MarketCardsProps {
+  game: GameType;
+  setGame: (game: GameType) => void;
+  selectedMarketCards: boolean[];
+  setSelectedMarketCards: (selectedMarketCards: boolean[]) => void;
+  tradeTemp: TradeOffer;
+  setTradeTemp: (tradeTemp: TradeOffer) => void;
+}
 export default function MarketCards({
   game,
   setGame,
@@ -10,14 +17,7 @@ export default function MarketCards({
   setSelectedMarketCards,
   tradeTemp,
   setTradeTemp,
-}: {
-  game: GameType;
-  setGame: (game: GameType) => void;
-  selectedMarketCards: boolean[];
-  setSelectedMarketCards: (selectedMarketCards: boolean[]) => void;
-  tradeTemp: TradeOffer;
-  setTradeTemp: (tradeTemp: TradeOffer) => void;
-}) {
+}: MarketCardsProps) {
   const { currentPlayer, players } = game;
   const handlePlantFromMarket = (fieldIndex: number, card: CardsType) => {
     const { currentPlayer: newCurrentPlayer, player } = plantFromMarket(
@@ -43,9 +43,8 @@ export default function MarketCards({
     );
     if (cardInTrade) {
       // Increase quantity if card is already in temp
-      cardInTrade.quantity++;
       newTempTrade.cardsFromMarket = tradeTemp.cardsFromMarket.map((c) =>
-        c.id === marketCard.id ? cardInTrade : c
+        c.id === marketCard.id ? { ...c, quantity: c.quantity + 1 } : c
       );
     } else {
       // Add the card to temp with quantity 1 if not already present

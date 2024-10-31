@@ -1,15 +1,9 @@
-import { GameType } from "../_types/types";
+import { GameAndSetGameProps } from "../_types/props";
 import GameDetails from "./GameDetails";
 import Marketing from "./Market/Marketing";
 import Player from "./Player";
 
-export default function Gameboard({
-  game,
-  setGame,
-}: {
-  game: GameType;
-  setGame: (game: GameType) => void;
-}) {
+export default function Gameboard({ game, setGame }: GameAndSetGameProps) {
   const { players, currentPlayer } = game;
 
   return (

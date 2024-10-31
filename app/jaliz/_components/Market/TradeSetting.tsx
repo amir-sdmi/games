@@ -7,19 +7,23 @@ import {
 import Button from "../ui/Button";
 import { cardName } from "../../_utils/utils";
 import { cardData } from "../../_utils/cardData";
-
+interface TradeSettingProps {
+  currentPlayer: CurrentPlayer;
+  players: PlayerType[];
+  tradeTemp: TradeOffer;
+  setTradeTemp: (tradeTemp: TradeOffer) => void;
+}
 export default function TradeSetting({
   tradeTemp,
   setTradeTemp,
   currentPlayer,
   players,
-}: {
-  currentPlayer: CurrentPlayer;
-  players: PlayerType[];
-  tradeTemp: TradeOffer;
-  setTradeTemp: (tradeTemp: TradeOffer) => void;
-}) {
-  const { hand, playerHat, otherPlayersHats } = players[currentPlayer.id];
+}: TradeSettingProps) {
+  const player = players[currentPlayer.id];
+  if (!player) {
+    throw new Error("invalid player id");
+  }
+  const { hand, playerHat, otherPlayersHats } = player;
   //handlers
   const handleAddPlayerHatToTrade = () => {
     setTradeTemp({ ...tradeTemp, includePlayerHat: true });

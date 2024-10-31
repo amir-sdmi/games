@@ -3,16 +3,12 @@ import { buy } from "../_utils/actions/buy";
 import Fields from "./Fields";
 import PlayerBuyingActions from "./PlayerBuyingActions";
 import PlayerDetails from "./PlayerDetails";
-
-export default function Player({
-  player,
-  game,
-  setGame,
-}: {
+interface PlayerProps {
   player: PlayerType;
   game: GameType;
   setGame: (game: GameType) => void;
-}) {
+}
+export default function Player({ player, game, setGame }: PlayerProps) {
   const { deck, availableManures, availableTractors } = game;
 
   const handleBuy = (

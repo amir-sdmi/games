@@ -39,13 +39,13 @@ export const updateCardQuantityMinusOne = (
   cards: CardsType[],
   cardId: CardsType["id"]
 ) => {
-  const newCards = [...cards];
-  const card = newCards.find((c) => c.id === cardId);
-  if (card) {
-    card.quantity--;
-    if (card.quantity <= 0) {
-      return newCards.filter((c) => c.id !== cardId);
-    }
+  if (!cards || !Array.isArray(cards)) {
+    throw new Error("Cards parameter must be an array");
   }
-  return newCards;
+  if (cardId === undefined || cardId === null) {
+    throw new Error("CardId parameter is required");
+  }
+  return cards
+    .map((c) => (c.id === cardId ? { ...c, quantity: c.quantity - 1 } : c))
+    .filter((c) => c.quantity > 0);
 };

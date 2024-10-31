@@ -1,19 +1,13 @@
 import { useState } from "react";
-import { GameType } from "../../_types/types";
 import { emptyTempTradeOffer } from "../../_utils/gameInitial";
 
 import TradeSetting from "./TradeSetting";
 import TradeTemp from "./TradeTemp";
 import TradeOffers from "./TradeOffers";
 import MarketCards from "./MarketCards";
+import { GameAndSetGameProps } from "../../_types/props";
 
-export default function Marketing({
-  game,
-  setGame,
-}: {
-  game: GameType;
-  setGame: (game: GameType) => void;
-}) {
+export default function Marketing({ game, setGame }: GameAndSetGameProps) {
   const { currentPlayer, players } = game;
   const [tradeTemp, setTradeTemp] = useState(
     emptyTempTradeOffer(currentPlayer.id)

@@ -8,7 +8,14 @@ import {
 import { cardName, updateCardQuantityMinusOne } from "../../_utils/utils";
 import Button from "../ui/Button";
 import { emptyTempTradeOffer } from "../../_utils/gameInitial";
-
+interface TradeShowProps {
+  tradeTemp: TradeOffer;
+  setTradeTemp: (tradeTemp: TradeOffer) => void;
+  game: GameType;
+  setGame: (game: GameType) => void;
+  selectedMarketCards: boolean[];
+  setSelectedMarketCards: (selectedMarketCards: boolean[]) => void;
+}
 export default function TradeTempShow({
   tradeTemp,
   setTradeTemp,
@@ -16,14 +23,7 @@ export default function TradeTempShow({
   setGame,
   selectedMarketCards,
   setSelectedMarketCards,
-}: {
-  tradeTemp: TradeOffer;
-  setTradeTemp: (tradeTemp: TradeOffer) => void;
-  game: GameType;
-  setGame: (game: GameType) => void;
-  selectedMarketCards: boolean[];
-  setSelectedMarketCards: (selectedMarketCards: boolean[]) => void;
-}) {
+}: TradeShowProps) {
   const handleRemoveMarketCardFromTempTrade = (cardId: CardsType["id"]) => {
     const newTradeTemp = {
       ...tradeTemp,

@@ -2,13 +2,7 @@ import { BuyType, GameType, PlayerType } from "../_types/types";
 import { harvest } from "../_utils/actions/harvest";
 import { cardData } from "../_utils/cardData";
 import Button from "./ui/Button";
-
-export default function Fields({
-  player,
-  game,
-  setGame,
-  handleBuy,
-}: {
+interface FieldsProps {
   player: PlayerType;
   game: GameType;
   setGame: (game: GameType) => void;
@@ -18,7 +12,13 @@ export default function Fields({
     price: number,
     fieldId?: number
   ) => void;
-}) {
+}
+export default function Fields({
+  player,
+  game,
+  setGame,
+  handleBuy,
+}: FieldsProps) {
   const handleHarvest = (fieldIndex: number, player: PlayerType) => {
     const {
       field: newField,

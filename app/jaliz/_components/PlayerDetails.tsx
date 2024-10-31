@@ -10,16 +10,17 @@ import { plantFromHand } from "../_utils/actions/plantFromHand";
 import { nextRound } from "../_utils/gameMaster";
 import { cardName } from "../_utils/utils";
 import Button from "./ui/Button";
+interface PlayerDetailsProps {
+  player: PlayerType;
+  game: GameType;
+  setGame: (game: GameType) => void;
+}
 
 export default function PlayerDetails({
   player,
   game,
   setGame,
-}: {
-  player: PlayerType;
-  game: GameType;
-  setGame: (game: GameType) => void;
-}) {
+}: PlayerDetailsProps) {
   const { currentPlayer, players } = game;
   const handlePlantFromHand = (
     fieldIndex: number,

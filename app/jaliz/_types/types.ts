@@ -2,7 +2,7 @@ type PlayerType = {
   id: number;
   playerName: string;
   money: number;
-  hand: CardType[];
+  hand: CardsType[];
   fields: FieldType[];
   thirdField: boolean;
   playerHat: HatType;
@@ -18,16 +18,11 @@ type HatType = {
 };
 type FieldType = {
   id: number;
-  crops: CropType;
+  crops: CardsType;
   manure: boolean;
 };
 
-type CropType = {
-  cardId: number | null;
-  quantity: number;
-};
-
-type CardType = {
+type CardInformationType = {
   id: number;
   name: string;
   totalQuantity: number;
@@ -37,14 +32,17 @@ type CardType = {
     4 | 5 | 6 | 7 | 8,
     7 | 8 | 9 | 10 | null,
   ];
-  inHandOrMarketId?: number | null;
+};
+type CardsType = {
+  id: number | null;
+  quantity: number;
 };
 
 type GameType = {
   players: PlayerType[];
   currentPlayer: CurrentPlayer;
-  deck: CardType[];
-  discardPile: CardType[];
+  deck: CardInformationType[];
+  discardPile: CardsType[];
   round: 1 | 2 | 3 | 4;
   availableManures: number;
   availableTractors: number;
@@ -56,14 +54,15 @@ type CurrentPlayer = {
   id: PlayerType["id"];
   turnStatus: "planting" | "marketting" | "addingCardsToHand";
   plantCounts: number;
-  markettingCards: CardType[];
+  markettingCards: CardsType[];
   tradeOffers: TradeOffer[];
 };
 
 type TradeOffer = {
   proposerId: PlayerType["id"];
-  cardsFromProposersHand: CardType[];
-  cardsFromMarket: CardType[];
+  cardsFromProposersHand: CardsType[];
+  cardsFromMarket: CardsType[];
+  requestCards: CardsType[];
   otherPlayersHats: PlayerType["id"][];
   includePlayerHat: boolean;
 };
@@ -71,10 +70,10 @@ type BuyType = "manure" | "tractor" | "cards" | "field";
 export type {
   BuyType,
   PlayerType,
-  CardType,
+  CardsType,
+  CardInformationType,
   HatType,
   FieldType,
-  CropType,
   GameType,
   CurrentPlayer,
   TradeOffer,

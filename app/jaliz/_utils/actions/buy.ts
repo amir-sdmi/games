@@ -1,8 +1,9 @@
-import { CardType, PlayerType } from "../../_types/types";
+import { CardInformationType, PlayerType } from "../../_types/types";
+import { fromDeckToHand } from "../utils";
 
 export const buy = (
   player: PlayerType,
-  deck: CardType[],
+  deck: CardInformationType[],
   availableManures: number,
   availableTractors: number,
   type: "field" | "manure" | "tractor" | "cards",
@@ -19,7 +20,7 @@ export const buy = (
         updatedPlayer.money -= price;
         updatedPlayer.fields.push({
           id: updatedPlayer.fields.length,
-          crops: { cardId: null, quantity: 0 },
+          crops: { id: null, quantity: 0 },
           manure: false,
         });
       }
@@ -50,14 +51,12 @@ export const buy = (
       if (updatedPlayer.money >= price && !updatedPlayer.hasBoughtCards) {
         updatedPlayer.money -= price;
         updatedPlayer.hasBoughtCards = true;
+        let newHand = [...updatedPlayer.hand];
         for (let i = 0; i < 3; i++) {
-          const newCard = updatedDeck.pop() as CardType;
-          const updatedCard = {
-            ...newCard,
-            inHandOrMarketId: updatedPlayer.hand.length,
-          };
-          updatedPlayer.hand.push(updatedCard);
+          const newCard = updatedDeck.pop() as CardInformationType;
+          newHand = fromDeckToHand(newCard, newHand);
         }
+        updatedPlayer.hand = newHand;
       }
       break;
 

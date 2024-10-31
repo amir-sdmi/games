@@ -1,7 +1,14 @@
-import { CardType, CurrentPlayer, GameType, PlayerType } from "../_types/types";
+import {
+  CardInformationType,
+  CardsType,
+  CurrentPlayer,
+  GameType,
+  PlayerType,
+} from "../_types/types";
 import { addCardsToHand } from "../_utils/actions/addCardsToHand";
 import { plantFromHand } from "../_utils/actions/plantFromHand";
 import { nextRound } from "../_utils/gameMaster";
+import { cardName } from "../_utils/utils";
 import Button from "./ui/Button";
 
 export default function PlayerDetails({
@@ -16,7 +23,7 @@ export default function PlayerDetails({
   const { currentPlayer, players, deck } = game;
   const handlePlantFromHand = (
     fieldIndex: number,
-    card: CardType,
+    card: CardsType,
     player: PlayerType
   ) => {
     const {
@@ -59,10 +66,10 @@ export default function PlayerDetails({
     const newDeck = [...deck];
     const newMarkettingCards = currentPlayer.markettingCards;
     for (let i = 0; i < 2; i++) {
-      const card = newDeck.pop() as CardType;
-      const newCard = {
-        ...card,
-        inHandOrMarketId: newMarkettingCards.length,
+      const card = newDeck.pop() as CardInformationType;
+      const newCard: CardsType = {
+        id: card.id,
+        quantity: 1,
       };
       newMarkettingCards.push(newCard);
     }
@@ -118,7 +125,7 @@ export default function PlayerDetails({
       <ol className="border border-blue-500">
         {player.hand.map((card, handIndex) => (
           <li key={handIndex}>
-            {card.name} {card.inHandOrMarketId}
+            {cardName(card.id)} {card.quantity}
             {player.id === currentPlayer.id &&
               currentPlayer.turnStatus === "planting" &&
               (currentPlayer.plantCounts < 2 ||

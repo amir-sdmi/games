@@ -1,6 +1,6 @@
-import { CardType } from "../_types/types";
+import { CardInformationType } from "../_types/types";
 
-export const cardData: CardType[] = [
+export const cardData: CardInformationType[] = [
   {
     id: 0,
     name: "felfel",

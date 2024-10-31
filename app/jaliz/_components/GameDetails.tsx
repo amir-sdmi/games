@@ -17,7 +17,10 @@ export default function GameDetails({ game }: { game: GameType }) {
       <h1>Gameboard</h1>
       <p>round : {round}</p>
       <p>deck : {deck.length} cards</p>
-      <p>discards : {discardPile.length}</p>
+      <p>
+        discards :
+        {discardPile.reduce((count, item) => item.quantity + count, 0)}
+      </p>
       <p>players number: {players.length}</p>
       <p>
         current player: {currentPlayer.id} : {currentPlayer.turnStatus}

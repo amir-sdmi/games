@@ -1,11 +1,14 @@
 import { shuffleArray } from "@/utils/utils";
 import {
-  CardType,
+  CardInformationType,
+  CardsType,
   CurrentPlayer,
   GameType,
   PlayerType,
   TradeOffer,
 } from "../_types/types";
+import { fromDeckToHand } from "./utils";
+import { cardData } from "./cardData";
 
 const createNewPlayer = (id: number, playerName: string): PlayerType => {
   return {
@@ -15,8 +18,8 @@ const createNewPlayer = (id: number, playerName: string): PlayerType => {
     money: 15,
     hand: [],
     fields: [
-      { id: 0, crops: { cardId: null, quantity: 0 }, manure: false },
-      { id: 1, crops: { cardId: null, quantity: 0 }, manure: false },
+      { id: 0, crops: { id: null, quantity: 0 }, manure: false },
+      { id: 1, crops: { id: null, quantity: 0 }, manure: false },
     ],
     thirdField: false,
     playerHat: { ownerId: id, ownedById: id },
@@ -34,7 +37,7 @@ const activeCardsPerPlayer = (
   switch (playerCount) {
     case 3:
       //TODO: change this to 1 to 9
-      return { from: 1, to: 3 };
+      return { from: 1, to: 6 };
     case 4:
       return { from: 0, to: 9 };
     case 5:
@@ -67,7 +70,7 @@ const endTurnReceivingCards = (playerCount: number) => {
 
 export const createNewGame = (
   playersNames: string[],
-  cardData: CardType[]
+  cardData: CardInformationType[]
 ): GameType => {
   const players = playersNames.map((playerName, index) =>
     createNewPlayer(index, playerName)
@@ -86,7 +89,7 @@ export const createNewGame = (
       card.id >= activeCardsPerPlayer(players.length).from &&
       card.id <= activeCardsPerPlayer(players.length).to
   );
-  const tempDeck: CardType[] = [];
+  const tempDeck: CardInformationType[] = [];
   filteredCards.forEach((card) => {
     for (let i = 0; i < card.totalQuantity; i++) {
       tempDeck.push(card);
@@ -97,13 +100,18 @@ export const createNewGame = (
   //giving five card to each player
   players.forEach((player) => {
     for (let i = 0; i < 5; i++) {
-      const card = deck.pop() as CardType;
-      const newCard = { ...card, inHandOrMarketId: i };
-      player.hand.push(newCard);
+      const card = deck.pop() as CardInformationType;
+      player.hand = fromDeckToHand(card, player.hand);
     }
   });
 
-  const discardPile: CardType[] = [];
+  const discardPile: CardsType[] = cardData.map((card) => {
+    return {
+      id: card.id,
+      name: card.name,
+      quantity: 0,
+    };
+  });
 
   return {
     players,
@@ -125,6 +133,7 @@ export const emptyTempTradeOffer = (
     proposerId: currentPlayerId,
     cardsFromProposersHand: [],
     cardsFromMarket: [],
+    requestCards: [],
     otherPlayersHats: [],
     includePlayerHat: false,
   };

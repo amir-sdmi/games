@@ -59,10 +59,8 @@ export default function Fields({
           )}
           {field.crops.quantity > 0 && (
             <div>
-              <p>crop: {field.crops.cardId}</p>
-              <p>
-                name: {cardData.find((c) => c.id === field.crops.cardId)?.name}
-              </p>
+              <p>id: {field.crops.id}</p>
+              <p>name: {cardData.find((c) => c.id === field.crops.id)?.name}</p>
               <p>quantity: {field.crops.quantity}</p>
             </div>
           )}

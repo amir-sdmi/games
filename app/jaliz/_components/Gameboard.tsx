@@ -1,6 +1,6 @@
 import { GameType } from "../_types/types";
 import GameDetails from "./GameDetails";
-import Marketting from "./Marketting";
+import Marketting from "./Market/Marketting";
 import Player from "./Player";
 
 //TODO:Important! inHandleOrMarketId is not perfect ! the problem is .lenght for id is not suitable. it should should be max id + 1. next thing is they should be completely unique, maybe it has some issues when they are duplicated. goje1 from two users might happen

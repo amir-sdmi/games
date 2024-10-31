@@ -4,10 +4,10 @@ import {
   CurrentPlayer,
   PlayerType,
   TradeOffer,
-} from "../_types/types";
-import Button from "./ui/Button";
-import { cardName } from "../_utils/utils";
-import { cardData } from "../_utils/cardData";
+} from "../../_types/types";
+import Button from "../ui/Button";
+import { cardName } from "../../_utils/utils";
+import { cardData } from "../../_utils/cardData";
 
 export default function TradeSetting({
   tradeTemp,

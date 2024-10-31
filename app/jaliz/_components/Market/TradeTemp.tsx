@@ -4,10 +4,10 @@ import {
   CurrentPlayer,
   GameType,
   TradeOffer,
-} from "../_types/types";
-import { cardName } from "../_utils/utils";
-import Button from "./ui/Button";
-import { emptyTempTradeOffer } from "../_utils/gameInitial";
+} from "../../_types/types";
+import { cardName } from "../../_utils/utils";
+import Button from "../ui/Button";
+import { emptyTempTradeOffer } from "../../_utils/gameInitial";
 
 export default function TradeTempShow({
   tradeTemp,
@@ -127,6 +127,7 @@ export default function TradeTempShow({
       },
     });
     setTradeTemp(emptyTempTradeOffer(currentPlayer.id));
+    setSelectedMarketCards([false, false]);
   };
   return (
     <div className="border border-yellow-500">

@@ -1,12 +1,17 @@
 import { useState } from "react";
-import { CardsType, GameType, PlayerType, TradeOffer } from "../_types/types";
-import { emptyTempTradeOffer } from "../_utils/gameInitial";
-import Button from "./ui/Button";
-import { isEqual } from "lodash";
-import { plantFromMarket } from "../_utils/actions/plantFromMarket";
-import { cardName, showHandCardsSeperately } from "../_utils/utils";
+import {
+  CardsType,
+  GameType,
+  PlayerType,
+  TradeOffer,
+} from "../../_types/types";
+import { emptyTempTradeOffer } from "../../_utils/gameInitial";
+import Button from "../ui/Button";
+import { plantFromMarket } from "../../_utils/actions/plantFromMarket";
+import { cardName } from "../../_utils/utils";
 import TradeSetting from "./TradeSetting";
-import TradeTempShow from "./TradeTempShow";
+import TradeTemp from "./TradeTemp";
+import TradeOffers from "./TradeOffers";
 
 export default function Marketting({
   game,
@@ -64,20 +69,6 @@ export default function Marketting({
     setSelectedMarketCards(newMarketCards);
   };
 
-  //TODO: ux is aweful ! make it better
-
-  const handleRemoveTradeOffer = (tradeOfferToDelete: TradeOffer) => {
-    setGame({
-      ...game,
-      currentPlayer: {
-        ...currentPlayer,
-        tradeOffers: currentPlayer.tradeOffers.filter(
-          (tradeOffer) => !isEqual(tradeOffer, tradeOfferToDelete)
-        ),
-      },
-    });
-  };
-
   return (
     <div className="flex gap-2 border border-green-700">
       <div className="border border-blue-500">
@@ -109,7 +100,7 @@ export default function Marketting({
         setTradeTemp={setTradeTemp}
         tradeTemp={tradeTemp}
       />
-      <TradeTempShow
+      <TradeTemp
         tradeTemp={tradeTemp}
         setTradeTemp={setTradeTemp}
         game={game}
@@ -117,35 +108,7 @@ export default function Marketting({
         selectedMarketCards={selectedMarketCards}
         setSelectedMarketCards={setSelectedMarketCards}
       />
-      {/* <div className="border-2 border-pink-500">
-        <p>trade offers:</p>
-        {currentPlayer.tradeOffers.map((tradeOffer, index) => (
-          <div className="border-2 border-green-400" key={index}>
-            cards from proposers hand:
-            <ol>
-              {tradeOffer.cardsFromProposersHand.map((card, i) => (
-                <li key={i}>{cardName(card.id)}</li>
-              ))}
-            </ol>
-            cards from market:
-            <ol>
-              {tradeOffer.cardsFromMarket.map((card, i) => (
-                <li key={i}>{cardName(card.id)}</li>
-              ))}
-            </ol>
-            other players hats:
-            <ol>
-              {tradeOffer.otherPlayersHats.map((hat, i) => (
-                <li key={i}>{players[hat].playerName}</li>
-              ))}
-            </ol>
-            current player hat: {tradeOffer.includePlayerHat ? "yes" : "no"}
-            <Button onClick={() => handleRemoveTradeOffer(tradeOffer)}>
-              Discard
-            </Button>
-          </div>
-        ))}
-      </div> */}
+      <TradeOffers game={game} setGame={setGame} />
     </div>
   );
 }

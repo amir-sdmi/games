@@ -9,7 +9,6 @@ type PlayerType = {
   tractor: boolean;
   otherPlayersHats: PlayerType["id"][];
   hasBoughtCards: boolean;
-  tradeOffersToCurrentPlayer: TradeOffer[];
 };
 
 type HatType = {
@@ -55,7 +54,7 @@ type CurrentPlayer = {
   turnStatus: "planting" | "marketting" | "addingCardsToHand";
   plantCounts: number;
   markettingCards: CardsType[];
-  tradeOffers: TradeOffer[];
+  tradeOffer: TradeOffer;
 };
 
 type TradeOffer = {

@@ -1,6 +1,6 @@
 import { GameType } from "../_types/types";
 import GameDetails from "./GameDetails";
-import Marketting from "./Market/Marketting";
+import Marketing from "./Market/Marketing";
 import Player from "./Player";
 
 export default function Gameboard({
@@ -24,8 +24,8 @@ export default function Gameboard({
             <Player player={player} game={game} setGame={setGame} />
 
             {currentPlayer.id === player.id &&
-              currentPlayer.turnStatus === "marketting" && (
-                <Marketting game={game} setGame={setGame} />
+              currentPlayer.turnStatus === "marketing" && (
+                <Marketing game={game} setGame={setGame} />
               )}
           </div>
         ))}

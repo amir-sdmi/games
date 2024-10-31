@@ -19,6 +19,7 @@ export default function TradeSetting({
   tradeTemp: TradeOffer;
   setTradeTemp: (tradeTemp: TradeOffer) => void;
 }) {
+  const { hand, playerHat, otherPlayersHats } = players[currentPlayer.id];
   //handlers
   const handleAddPlayerHatToTrade = () => {
     setTradeTemp({ ...tradeTemp, includePlayerHat: true });
@@ -62,7 +63,7 @@ export default function TradeSetting({
     <div className="border-4 border-rose-800 flex gap-2">
       <div className="border-2 border-yellow-400 ">
         <p>hand :</p>
-        {players[currentPlayer.id].hand.map((card, index) => (
+        {hand.map((card, index) => (
           <div key={index} className="flex gap-2">
             <p>
               {cardName(card.id)}
@@ -85,7 +86,7 @@ export default function TradeSetting({
           </div>
         ))}
         <p>hats :</p>
-        {players[currentPlayer.id].playerHat.ownedById === currentPlayer.id && (
+        {playerHat.ownedById === currentPlayer.id && (
           <div className="flex gap-2">
             <p>my hat</p>
             <Button
@@ -96,7 +97,7 @@ export default function TradeSetting({
             </Button>
           </div>
         )}
-        {players[currentPlayer.id].otherPlayersHats.map((hatOwnerId, index) => (
+        {otherPlayersHats.map((hatOwnerId, index) => (
           <div key={index} className="flex gap-2">
             <p>{players[hatOwnerId].playerName} hat</p>
             <Button onClick={() => handleOthersHatsToTrade(hatOwnerId)}>

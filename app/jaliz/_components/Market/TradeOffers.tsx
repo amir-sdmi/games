@@ -49,11 +49,13 @@ export default function TradeOffers({
         requested cards:
         <ol>
           {tradeOffer.requestCards.map((card, i) => (
-            <li key={i}>{cardName(card.id)}</li>
+            <li key={i}>
+              {cardName(card.id)} {card.quantity}
+            </li>
           ))}
         </ol>
         current player hat: {tradeOffer.includePlayerHat ? "yes" : "no"}
-        <Button onClick={() => handleRemoveTradeOffer()}>Discard</Button>
+        <Button onClick={handleRemoveTradeOffer}>Discard</Button>
       </div>
     </div>
   );

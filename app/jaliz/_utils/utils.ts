@@ -34,3 +34,18 @@ export function showHandCardsSeperately(hand: CardsType[]) {
   });
   return seperatedHand;
 }
+
+export const updateCardQuantityMinusOne = (
+  cards: CardsType[],
+  cardId: CardsType["id"]
+) => {
+  const newCards = [...cards];
+  const card = newCards.find((c) => c.id === cardId);
+  if (card) {
+    card.quantity--;
+    if (card.quantity <= 0) {
+      return newCards.filter((c) => c.id !== cardId);
+    }
+  }
+  return newCards;
+};

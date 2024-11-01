@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PlayersForm from "./_components/PlayersForm";
 import { GameType } from "../../server/types/types";
 import Gameboard from "./_components/Gameboard";
@@ -12,8 +12,8 @@ export default function JalizPage() {
     "player 2",
     "player 3",
   ]);
-
   const [game, setGame] = useState<GameType>(createNewGame(players, cardData));
+
   return (
     <div>
       <h1 className="text-6xl mb-20">Jaliz Page</h1>
